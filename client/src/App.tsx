@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Projects } from './pages/projects'
 import { Kanban } from './pages/kanban'
 import { NoProjects } from './components/no-projects'
+import { Teams } from './pages/teams'
+import { Team } from './pages/team'
 
 function App() {
 
@@ -14,7 +16,9 @@ function App() {
         <Routes>
           <Route path='/projects' element={<Projects />} />
           <Route path='/kanban' element={<Kanban />} />
-          {/* <Route path='/noprojects' element={<NoProjects />} /> */}
+          <Route path='/noprojects' element={<NoProjects />} />
+          <Route path='/teams' element={<Teams />} />
+          <Route path='/team' element={<Team />} />
         </Routes>
       </BrowserRouter>
     </div>

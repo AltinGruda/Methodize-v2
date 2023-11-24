@@ -22,7 +22,7 @@ export function Sidebar() {
                 </div>
                 <div className='flex gap-y-6 gap-x-5 hover:text-[#D2D2D2] hover:cursor-pointer'>
                     <Users2 />
-                    <span>Teams</span>
+                    <Link to="teams">Teams</Link>
                 </div>
                 <div className='flex gap-y-6 gap-x-5 hover:text-[#D2D2D2] hover:cursor-pointer'>
                     <Video />
