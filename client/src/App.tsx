@@ -14,7 +14,7 @@ function App() {
         <Routes>
           <Route path='/projects' element={<Projects />} />
           <Route path='/kanban' element={<Kanban />} />
-          <Route path='/noprojects' element={<NoProjects />} />
+          {/* <Route path='/noprojects' element={<NoProjects />} /> */}
         </Routes>
       </BrowserRouter>
     </div>
