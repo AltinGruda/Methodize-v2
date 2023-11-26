@@ -3,12 +3,10 @@ import User from "../models/User";
 
 module.exports = function (passport: any) {
   passport.use(
-    new LocalStrategy({ usernameField: "email" }, (email: any, password: any, done: any) => {
-      User.findOne({ email: email.toLowerCase() }, (err: any, user: any) => {
-        if (err) {
-          return done(err);
-        }
-        if (!user) {
+    new LocalStrategy({ usernameField: "email" }, async (email: any, password: any, done: any) => {
+      try {
+        const user = await User.findOne({ email: email.toLowerCase() })
+        if(!user){
           return done(null, false, { msg: `Email ${email} not found.` });
         }
         if (!user.password) {
@@ -26,7 +24,11 @@ module.exports = function (passport: any) {
           }
           return done(null, false, { msg: "Invalid email or password." });
         });
-      });
+
+      } catch (error) {
+        console.log(error);
+        return done(error);
+      }
     })
   );
 
@@ -34,7 +36,13 @@ module.exports = function (passport: any) {
     done(null, user.id);
   });
 
-  passport.deserializeUser((id: any, done: any) => {
-    User.findById(id, (err: any, user: any) => done(err, user));
+  passport.deserializeUser( async (id: any, done: any) => {
+    try {
+      const user = await User.findById(id);
+      done(null, user);
+    } catch (error) {
+      console.log(error);
+      done(error, null);
+    }
   });
 };

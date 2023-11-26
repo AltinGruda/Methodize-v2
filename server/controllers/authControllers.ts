@@ -36,37 +36,30 @@ export const getUser = (req: Request, res: Response) => {
   res.send(req.user);
 }
 
-export const postSignup = (req: Request, res: Response, next: NextFunction) => {
+export const postSignup = async (req: Request, res: Response, next: NextFunction) => {
+  try {
     const user = new User({
-        fullname: req.body.fullname,
-        email: req.body.email,
-        password: req.body.password,
+      fullname: req.body.fullname,
+      email: req.body.email,
+      password: req.body.password,
     });
 
-    User.findOne(
-        { $or: [{ email: req.body.email }, { fullname: req.body.fullname }] },
-        (err: any, existingUser: any) => {
-            if (err) {
+    const existingUser = await  User.findOne({ $or: [{ email: req.body.email }, { fullname: req.body.fullname }] });
+    if(existingUser) {
+      return res.send('User already exists!');
+    }
+    
+    user.save();
+
+    // Assuming `req.logIn` is a function that logs in the user
+    req.logIn(user, (err: any) => {
+        if (err) {
             return next(err);
-            }
-            if (existingUser) {
-            return res.send('User already exists!');
-            }
-
-            try {
-                user.save();
-
-                // Assuming `req.logIn` is a function that logs in the user
-                req.logIn(user, (err: any) => {
-                    if (err) {
-                        return next(err);
-                    }
-                    res.send(user);
-                });
-            
-            } catch (err) {
-                return next(err);
-            }
         }
-    );
+        res.send(user);
+    });
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
 };
