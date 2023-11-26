@@ -10,6 +10,7 @@ const express_session_1 = __importDefault(require("express-session"));
 const MongoStore = require("connect-mongo")(express_session_1.default);
 const database_1 = __importDefault(require("./config/database"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
+const teamRoutes_1 = __importDefault(require("./routes/teamRoutes"));
 const app = (0, express_1.default)();
 //Use .env file in config folder
 require("dotenv").config({ path: "./config/.env" });
@@ -32,4 +33,5 @@ app.use(passport_1.default.initialize());
 app.use(passport_1.default.session());
 // Routes
 app.use('/', authRoutes_1.default);
+app.use('/team', teamRoutes_1.default);
 app.listen(5000, () => console.log('Listening at port 5000'));
