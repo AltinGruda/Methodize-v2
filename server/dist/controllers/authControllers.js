@@ -16,38 +16,53 @@ exports.postSignup = exports.getUser = exports.logout = exports.postLogin = void
 const passport_1 = __importDefault(require("passport"));
 const User_1 = __importDefault(require("../models/User"));
 const postLogin = (req, res, next) => {
-    passport_1.default.authenticate("local", (err, user, info) => {
-        if (err) {
-            return next(err);
-        }
-        if (!user) {
-            return res.send('User doesnt exist!');
-        }
-        req.logIn(user, (err) => {
+    try {
+        passport_1.default.authenticate("local", (err, user, info) => {
             if (err) {
                 return next(err);
             }
-            res.send(user);
-        });
-    })(req, res, next);
+            if (!user) {
+                return res.send('User doesnt exist!');
+            }
+            req.logIn(user, (err) => {
+                if (err) {
+                    return next(err);
+                }
+                res.send(user);
+            });
+        })(req, res, next);
+    }
+    catch (error) {
+        console.log(error);
+    }
 };
 exports.postLogin = postLogin;
 const logout = (req, res) => {
-    req.logout(() => {
-        console.log('User has logged out.');
-    });
-    req.session.destroy((err) => {
-        if (err)
-            console.log("Error : Failed to destroy the session during logout.", err);
-        req.user = undefined;
-        res.send('User has logged out.');
-    });
+    try {
+        req.logout(() => {
+            console.log('User has logged out.');
+        });
+        req.session.destroy((err) => {
+            if (err)
+                console.log("Error : Failed to destroy the session during logout.", err);
+            req.user = undefined;
+            res.send('User has logged out.');
+        });
+    }
+    catch (error) {
+        console.log(error);
+    }
 };
 exports.logout = logout;
 const getUser = (req, res) => {
-    if (!req.user)
-        res.send('User is not logged in!');
-    res.send(req.user);
+    try {
+        if (!req.user)
+            res.send('User is not logged in!');
+        res.send(req.user);
+    }
+    catch (error) {
+        console.log(error);
+    }
 };
 exports.getUser = getUser;
 const postSignup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
