@@ -12,6 +12,4 @@ const connectDB = async () => {
   }
 };
 
-console.log("hi");
-
 export default connectDB;
