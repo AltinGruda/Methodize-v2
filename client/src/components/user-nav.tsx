@@ -15,9 +15,12 @@
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
   import Avatar from "boring-avatars"
+import { Bell } from "lucide-react"
   
   export function UserNav() {
     return (
+      <>
+      <Bell className="mr-5"  />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           {/* <Button variant="ghost" className="relative h-8 w-8 rounded-full"> */}
@@ -28,7 +31,7 @@
                 <div className="h-10 w-10">
                     <Avatar
                             size={40}
-                            name="Filan Fisteku" // change this to user.name
+                            name="Altin Gruda" // change this to user.name
                             variant="beam"
                             colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
                             
@@ -71,5 +74,6 @@
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      </>
     )
   }

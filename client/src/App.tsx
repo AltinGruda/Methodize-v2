@@ -6,6 +6,7 @@ import { Kanban } from './pages/kanban'
 import { NoProjects } from './components/no-projects'
 import { Teams } from './pages/teams'
 import { Team } from './pages/team'
+import Authentication from './pages/authentication'
 
 function App() {
 
@@ -14,6 +15,7 @@ function App() {
       <BrowserRouter>
       <Sidebar />
         <Routes>
+          <Route path='/authentication' element={<Authentication />} />
           <Route path='/projects' element={<Projects />} />
           <Route path='/kanban' element={<Kanban />} />
           <Route path='/noprojects' element={<NoProjects />} />
