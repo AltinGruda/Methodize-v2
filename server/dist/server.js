@@ -11,6 +11,7 @@ const MongoStore = require("connect-mongo")(express_session_1.default);
 const database_1 = __importDefault(require("./config/database"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const teamRoutes_1 = __importDefault(require("./routes/teamRoutes"));
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 //Use .env file in config folder
 require("dotenv").config({ path: "./config/.env" });
@@ -21,6 +22,8 @@ require("./config/passport")(passport_1.default);
 //Body Parsing
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
+//Cors
+app.use((0, cors_1.default)());
 // Setup Sessions - stored in MongoDB
 app.use((0, express_session_1.default)({
     secret: "keyboard cat",

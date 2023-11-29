@@ -20,9 +20,6 @@ UserSchema.pre('save', function save(next) {
         if (err) {
             return next(err);
         }
-        if (!user.password) {
-            return next(err);
-        }
         bcrypt_1.default.hash(user.password, salt, (err, hash) => {
             if (err) {
                 return next(err);

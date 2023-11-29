@@ -14,8 +14,11 @@ const TeamSchema = new mongoose.Schema({
     },
     members: [{
             user: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'User',
+                type: {
+                    _id: mongoose.Schema.Types.ObjectId,
+                    fullname: String,
+                    email: String
+                },
             },
             status: {
                 type: String, // 'pending', 'accepted', 'rejected'

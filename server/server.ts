@@ -6,6 +6,7 @@ const MongoStore = require("connect-mongo")(session);
 import connectDB from "./config/database";
 import authRoutes from './routes/authRoutes';
 import teamRoutes from './routes/teamRoutes';
+import cors from 'cors';
 const app = express();
 
 //Use .env file in config folder
@@ -20,6 +21,9 @@ connectDB();
 //Body Parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+//Cors
+app.use(cors());
 
 // Setup Sessions - stored in MongoDB
 app.use(
