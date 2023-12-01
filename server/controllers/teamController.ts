@@ -30,6 +30,17 @@ export const create = async (req: Request, res: Response) => {
     }
 }
 
+export const getTeamById = async (req: Request, res: Response) => {
+    try {
+        const teamId = req.params.id;
+        const team = await Team.findById(teamId);
+        res.json(team)
+    } catch (error) {
+        console.log(error);
+        res.json('Error listing teams by team id');
+    }
+}
+
 // Get a list of teams of an user
 export const listTeams = async (req: Request, res: Response) => {
     try {

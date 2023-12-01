@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleResponse = exports.sendRequest = exports.listTeams = exports.create = void 0;
+exports.handleResponse = exports.sendRequest = exports.listTeams = exports.getTeamById = exports.create = void 0;
 const Team_1 = __importDefault(require("../models/Team"));
 const User_1 = __importDefault(require("../models/User"));
 const mongoose = require('mongoose');
@@ -42,6 +42,18 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.create = create;
+const getTeamById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const teamId = req.params.id;
+        const team = yield Team_1.default.findById(teamId);
+        res.json(team);
+    }
+    catch (error) {
+        console.log(error);
+        res.json('Error listing teams by team id');
+    }
+});
+exports.getTeamById = getTeamById;
 // Get a list of teams of an user
 const listTeams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

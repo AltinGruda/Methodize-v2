@@ -23,7 +23,7 @@ const TeamSchema = new mongoose.Schema({
           type: String, // 'pending', 'accepted', 'rejected'
           default: 'pending',
         },
-      }],
+    }],
 })
 
 export default mongoose.model("Team", TeamSchema);

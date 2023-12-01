@@ -5,10 +5,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
-const authControllers_1 = require("../controllers/authControllers");
-//Main Routes - simplified for now
-router.post("/login", authControllers_1.postLogin);
-router.get("/logout", authControllers_1.logout);
-router.post("/signup", authControllers_1.postSignup);
-router.get("/user", authControllers_1.getUser);
+const { body } = require('express-validator');
+const User_1 = __importDefault(require("../models/User"));
+const authController = require('../controllers/authController');
+router.put('/signup', [
+    body('email')
+        .isEmail()
+        .withMessage('Please enter a valid email.')
+        .custom((value) => {
+        return User_1.default.findOne({ email: value }).then((userDoc) => {
+            if (userDoc) {
+                return Promise.reject('E-Mail address already exists!');
+            }
+        });
+    })
+        .normalizeEmail(),
+    body('password')
+        .trim()
+        .isLength({ min: 5 }),
+    body('name')
+        .trim()
+        .not()
+        .isEmpty()
+], authController.signup);
+router.post('/login', authController.login);
 exports.default = router;
