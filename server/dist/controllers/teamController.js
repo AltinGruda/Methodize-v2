@@ -70,9 +70,8 @@ exports.listTeams = listTeams;
 // Send request to a fullnamed user
 const sendRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { teamId, fullname } = req.params;
-        const userDetails = yield User_1.default.find({ fullname });
-        console.log(userDetails);
+        const { teamId, email } = req.params;
+        const userDetails = yield User_1.default.find({ email: email });
         if (!userDetails) {
             res.json("User is not found!");
         }
@@ -98,19 +97,16 @@ exports.sendRequest = sendRequest;
 // Send the response (e.x: accepting the request to join a team)
 const handleResponse = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { teamId, fullname } = req.params;
-        const userDetails = yield User_1.default.findOne({ fullname }); // Use findOne instead of find
+        const { teamId, email } = req.params;
+        const userDetails = yield User_1.default.find({ email: email }); // Use findOne instead of find
         if (!userDetails) {
             return res.json('User not found.');
         }
         const team = yield Team_1.default.findOneAndUpdate({
             _id: teamId,
-            'members.user._id': userDetails._id,
+            'members.user._id': userDetails[0]._id,
             'members.status': 'pending',
         }, { $set: { 'members.$.status': 'accepted' } }, { new: true });
-        if (!team) {
-            return res.json('User has not been invited to the team.');
-        }
         res.json(team);
     }
     catch (error) {

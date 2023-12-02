@@ -19,7 +19,6 @@ const jwt = require('jsonwebtoken');
 const User_1 = __importDefault(require("../models/User"));
 exports.signup = (req, res, next) => {
     const errors = (0, express_validator_1.validationResult)(req);
-    console.log(errors);
     if (!errors.isEmpty()) {
         const error = new Error('Validation failed.');
         error.statusCode = 422;
@@ -85,7 +84,7 @@ exports.login = (req, res, next) => {
             email: loadedUser.email,
             userId: loadedUser._id.toString()
         }, 'somesupersecretsecret', { expiresIn: '1h' });
-        res.status(200).json({ token: token, userId: loadedUser._id.toString() });
+        res.status(200).json({ token: token, userId: loadedUser._id.toString(), user: loadedUser });
     })
         .catch((err) => {
         if (!err.statusCode) {

@@ -18,7 +18,7 @@ export const create = async (req: Request, res: Response) => {
             owner,
             members: [
                 {
-                    user: ownerDetails, 
+                    user: ownerDetails,
                     status: 'accepted'
                 }
             ],
@@ -56,9 +56,9 @@ export const listTeams = async (req: Request, res: Response) => {
 // Send request to a fullnamed user
 export const sendRequest = async (req: Request, res: Response) => {
     try {
-        const { teamId, fullname } = req.params; 
-        const userDetails = await User.find({ fullname });
-        console.log(userDetails);
+        const { teamId, email } = req.params; 
+        const userDetails = await User.find({email: email});
+
         if(!userDetails){
             res.json("User is not found!");
         }
@@ -85,9 +85,8 @@ export const sendRequest = async (req: Request, res: Response) => {
 // Send the response (e.x: accepting the request to join a team)
 export const handleResponse = async (req: Request, res: Response) => {
     try {
-        const { teamId, fullname } = req.params;
-        const userDetails = await User.findOne({ fullname }); // Use findOne instead of find
-
+        const { teamId, email } = req.params;
+        const userDetails = await User.find({email: email}); // Use findOne instead of find
         if (!userDetails) {
             return res.json('User not found.');
         }
@@ -95,16 +94,12 @@ export const handleResponse = async (req: Request, res: Response) => {
         const team = await Team.findOneAndUpdate(
             {
                 _id: teamId,
-                'members.user._id': userDetails._id,
+                'members.user._id': userDetails[0]._id,
                 'members.status': 'pending',
             },
             { $set: { 'members.$.status': 'accepted' } },
             { new: true }
         );
-
-        if (!team) {
-            return res.json('User has not been invited to the team.');
-        }
 
         res.json(team);
     } catch (error) {

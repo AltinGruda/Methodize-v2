@@ -15,7 +15,7 @@ const TeamSchema = new mongoose.Schema({
         user: {
           type: {
             _id: mongoose.Schema.Types.ObjectId,
-            fullname: String,
+            name: String,
             email: String
           },
         },
