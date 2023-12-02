@@ -5,8 +5,31 @@ import { Input } from "@/components/ui/input";
 import { UserNav } from "@/components/user-nav";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getUserTeams } from "@/api/apiCalls";
 
+export interface TeamInterface {
+    _id: string;
+    name: string;
+    owner: string;
+    members: [];
+}
 export function Teams() {
+    // const [teams, setTeams] = useState<TeamInterface[]>([]);
+   
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //       try {
+    //         const userTeams = await getUserTeams(user);
+    //         setTeams(userTeams);
+    //       } catch (error) {
+    //         console.error('Error fetching user teams:', error);
+    //       }
+    //     };
+      
+    //     fetchData();
+    // }, [user]); // Add user as a dependency if it's used in getUserTeams
+
     return (
         <div className="m-10 flex flex-col col-span-4 gap-y-5">
             <div className="flex justify-between items-center">
@@ -49,8 +72,9 @@ export function Teams() {
                 </div>
             </div>
             <div className="flex gap-x-5">
-                <Team />
-                <Team />
+                {/* {teams.map((team) => (
+                    <Team key={team._id} team={team} />
+                ))} */}
             </div>
         </div>
     )

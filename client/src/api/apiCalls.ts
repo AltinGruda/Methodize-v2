@@ -1,42 +1,11 @@
-import { FieldValues } from "react-hook-form";
+import { User } from "@/context/AuthContext";
 
-export async function RegisterUser(data: FieldValues) {
+export async function getUserTeams(user: User | null) {
     try {
-        const response = await fetch('http://localhost:5000/signup', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                fullname: data.name,
-                email: data.email,
-                password: data.password
-            })
-        });
-
-        if (response.ok) {
-            console.log('User created, redirecting soon!');
-        }
-    } catch (error) {
-        console.log(error);
-    }
-}
-export async function LoginUser(data: FieldValues) {
-    try {
-        const response = await fetch('http://localhost:5000/login', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email: data.email,
-                password: data.password
-            })
-        });
-
-        if (response.ok) {
-            console.log('User logging in, redirecting soon!');
-        }
+        if(user === null) throw Error('User is not authenticated.')
+        const response = await fetch(`http://localhost:5000/team/list/${user._id}`)
+        const teams = await response.json();
+        return teams;
     } catch (error) {
         console.log(error);
     }

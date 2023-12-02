@@ -7,21 +7,26 @@ import { NoProjects } from './components/no-projects'
 import { Teams } from './pages/teams'
 import { Team } from './pages/team'
 import Authentication from './pages/authentication'
+import { useAuth } from './context/AuthContext'
+import PrivateRoutes from './utils/PrivateRoutes'
 
 function App() {
+  const {isAuth} = useAuth();
 
   return (
     <div className='grid grid-cols-5 bg-[#D9DADE] min-h-screen'>
       <BrowserRouter>
-      <Sidebar />
-        <Routes>
-          <Route path='/authentication' element={<Authentication />} />
-          <Route path='/projects' element={<Projects />} />
-          <Route path='/kanban' element={<Kanban />} />
-          <Route path='/noprojects' element={<NoProjects />} />
-          <Route path='/teams' element={<Teams />} />
-          <Route path='/team' element={<Team />} />
-        </Routes>
+        {isAuth && <Sidebar />}
+          <Routes>
+              <Route element={<PrivateRoutes />}>
+                <Route path='/projects' element={<Projects />} />
+                <Route path='/kanban' element={<Kanban />} />
+                <Route path='/noprojects' element={<NoProjects />} />
+                <Route path='/teams' element={<Teams />} />
+                <Route path='/team/:id' element={<Team />} />
+              </Route>
+              <Route path='/login' element={<Authentication />} />
+          </Routes>
       </BrowserRouter>
     </div>
   )

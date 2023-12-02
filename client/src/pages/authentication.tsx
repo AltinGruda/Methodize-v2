@@ -4,11 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FieldValues, useForm } from "react-hook-form";
-import { useUser } from "@/context/UserContext";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Authentication() {
-    const {login} = useUser();
-    const {register, handleSubmit} = useForm<FieldValues>();
+    const { login } = useAuth();
+    const { register, handleSubmit } = useForm<FieldValues>();
+    const navigate = useNavigate();
 
     const handleLogin = async (data: FieldValues) => {
         // Create a temporary object with email and password properties
@@ -18,7 +20,8 @@ export default function Authentication() {
         };
 
         // Call the login function with the temporary object
-        login(loginData);
+        await login(loginData);
+        navigate('/projects')
     };
 
     return (
@@ -42,7 +45,7 @@ export default function Authentication() {
                                 <Input id="email" type="text" {...register('email')}/>
                                 <Label htmlFor="password">Password</Label>
                                 <Input id="password" type="password" {...register('password')} />
-                                <Button type="submit">Login</Button>
+                                <Button type="submit">Login</Button> 
                             </form>
                         </CardContent>
                     </Card>
