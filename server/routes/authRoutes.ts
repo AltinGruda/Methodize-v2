@@ -31,6 +31,7 @@ router.put(
 );
 
 router.post('/login', authController.login);
-
+router.get('/users', authController.allUsers)
+router.get('/user/:id', authController.getUserById);
 
 export default router;

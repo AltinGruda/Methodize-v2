@@ -86,3 +86,23 @@ exports.login = (req: Request, res: Response, next: NextFunction) => {
       next(err);
     });
 };
+
+exports.allUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find();
+
+    res.json(users);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+exports.getUserById = async (req: Request, res: Response) => {
+  try {
+    const user = await User.find({_id: req.params.id});
+
+    res.json(user);
+  } catch (error) {
+    console.log(error);
+  }
+}

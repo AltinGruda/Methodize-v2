@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleResponse = exports.sendRequest = exports.listTeams = exports.getTeamById = exports.create = void 0;
+exports.addUserToTeam = exports.listTeams = exports.getTeamById = exports.create = void 0;
 const Team_1 = __importDefault(require("../models/Team"));
 const User_1 = __importDefault(require("../models/User"));
 const mongoose = require('mongoose');
@@ -29,7 +29,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             owner,
             members: [
                 {
-                    user: ownerDetails,
+                    user_id: owner,
                     status: 'accepted'
                 }
             ],
@@ -58,7 +58,7 @@ exports.getTeamById = getTeamById;
 const listTeams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.params.id;
-        const teams = yield Team_1.default.find({ 'members.user._id': userId });
+        const teams = yield Team_1.default.find({ 'members.user_id': userId });
         res.json(teams);
     }
     catch (error) {
@@ -67,51 +67,75 @@ const listTeams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.listTeams = listTeams;
-// Send request to a fullnamed user
-const sendRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// Everything commented is disabled atm
+// // Send request to a fullnamed user
+// export const sendRequest = async (req: Request, res: Response) => {
+//     try {
+//         const { teamId, email } = req.params; 
+//         const userDetails = await User.find({email: email});
+//         if(!userDetails){
+//             res.json("User is not found!");
+//         }
+//         const team = await Team.findByIdAndUpdate(
+//             teamId,
+//             { $push: {
+//                 members: {
+//                     user: {
+//                         _id: userDetails[0]._id, // Assuming you want the first user if multiple found
+//                         fullname: userDetails[0].fullname,
+//                         email: userDetails[0].email,
+//                     },
+//                     status: 'pending' }} },
+//             { new: true } //You should set the new option to true to return the document after update was applied.
+//         );
+//         res.json(team);
+//     } catch (error) {
+//         console.log(error);
+//         res.json('Error sending the join team request.')
+//     }
+// }
+// // Send the response (e.x: accepting the request to join a team)
+// export const handleResponse = async (req: Request, res: Response) => {
+//     try {
+//         const { teamId, email } = req.params;
+//         const userDetails = await User.find({email: email}); // Use findOne instead of find
+//         if (!userDetails) {
+//             return res.json('User not found.');
+//         }
+//         const team = await Team.findOneAndUpdate(
+//             {
+//                 _id: teamId,
+//                 'members.user._id': userDetails[0]._id,
+//                 'members.status': 'pending',
+//             },
+//             { $set: { 'members.$.status': 'accepted' } },
+//             { new: true }
+//         );
+//         res.json(team);
+//     } catch (error) {
+//         console.error(error);
+//         res.json('Error handling the response of the team request.');
+//     }
+// };
+//Add other users to team
+const addUserToTeam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { teamId, email } = req.params;
-        const userDetails = yield User_1.default.find({ email: email });
-        if (!userDetails) {
-            res.json("User is not found!");
-        }
-        const team = yield Team_1.default.findByIdAndUpdate(teamId, { $push: {
+        const team_id = req.params.teamId;
+        const user_id = req.params.userId;
+        const team = yield Team_1.default.findOneAndUpdate({
+            _id: team_id,
+        }, {
+            $push: {
                 members: {
-                    user: {
-                        _id: userDetails[0]._id, // Assuming you want the first user if multiple found
-                        fullname: userDetails[0].fullname,
-                        email: userDetails[0].email,
-                    },
-                    status: 'pending'
+                    user_id: user_id,
+                    status: 'accepted'
                 }
-            } }, { new: true } //You should set the new option to true to return the document after update was applied.
-        );
+            }
+        });
         res.json(team);
     }
     catch (error) {
         console.log(error);
-        res.json('Error sending the join team request.');
     }
 });
-exports.sendRequest = sendRequest;
-// Send the response (e.x: accepting the request to join a team)
-const handleResponse = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { teamId, email } = req.params;
-        const userDetails = yield User_1.default.find({ email: email }); // Use findOne instead of find
-        if (!userDetails) {
-            return res.json('User not found.');
-        }
-        const team = yield Team_1.default.findOneAndUpdate({
-            _id: teamId,
-            'members.user._id': userDetails[0]._id,
-            'members.status': 'pending',
-        }, { $set: { 'members.$.status': 'accepted' } }, { new: true });
-        res.json(team);
-    }
-    catch (error) {
-        console.error(error);
-        res.json('Error handling the response of the team request.');
-    }
-});
-exports.handleResponse = handleResponse;
+exports.addUserToTeam = addUserToTeam;

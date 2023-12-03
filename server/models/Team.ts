@@ -12,13 +12,14 @@ const TeamSchema = new mongoose.Schema({
         required: true,
     },
     members: [{
-        user: {
-          type: {
-            _id: mongoose.Schema.Types.ObjectId,
-            name: String,
-            email: String
-          },
-        },
+        // user: {
+        //   type: {
+        //     _id: mongoose.Schema.Types.ObjectId,
+        //     name: String,
+        //     email: String
+        //   },
+        // },
+        user_id: mongoose.Schema.Types.ObjectId,
         status: {
           type: String, // 'pending', 'accepted', 'rejected'
           default: 'pending',

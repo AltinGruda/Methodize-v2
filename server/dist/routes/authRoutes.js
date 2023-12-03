@@ -29,4 +29,6 @@ router.put('/signup', [
         .isEmpty()
 ], authController.signup);
 router.post('/login', authController.login);
+router.get('/users', authController.allUsers);
+router.get('/user/:id', authController.getUserById);
 exports.default = router;

@@ -9,6 +9,7 @@ const router = express_1.default.Router();
 router.post('/create', teamController_1.create);
 router.get('/list/:id', teamController_1.listTeams);
 router.get('/:id', teamController_1.getTeamById);
-router.post('/join-team/:teamId/:email', teamController_1.sendRequest);
-router.put('/accept-request/:teamId/:email', teamController_1.handleResponse);
+// router.post('/join-team/:teamId/:email', sendRequest);
+// router.put('/accept-request/:teamId/:email', handleResponse)
+router.post('/:teamId/user/:userId', teamController_1.addUserToTeam);
 exports.default = router;

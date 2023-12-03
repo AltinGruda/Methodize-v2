@@ -93,3 +93,21 @@ exports.login = (req, res, next) => {
         next(err);
     });
 };
+exports.allUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const users = yield User_1.default.find();
+        res.json(users);
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield User_1.default.find({ _id: req.params.id });
+        res.json(user);
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
