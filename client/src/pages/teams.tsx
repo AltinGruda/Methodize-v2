@@ -7,6 +7,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getUserTeams } from "@/api/apiCalls";
+import { useAuth } from "@/context/useAuth";
+import { Socket } from "socket.io-client";
+
+interface Props {
+    socket: Socket | null;
+}
 
 export interface TeamInterface {
     _id: string;
@@ -14,27 +20,27 @@ export interface TeamInterface {
     owner: string;
     members: [];
 }
-export function Teams() {
-    // const [teams, setTeams] = useState<TeamInterface[]>([]);
-   
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //       try {
-    //         const userTeams = await getUserTeams(user);
-    //         setTeams(userTeams);
-    //       } catch (error) {
-    //         console.error('Error fetching user teams:', error);
-    //       }
-    //     };
-      
-    //     fetchData();
-    // }, [user]); // Add user as a dependency if it's used in getUserTeams
-
+export const Teams: React.FC<Props> = ({socket}) => {
+    const {userId} = useAuth();
+    const [teams, setTeams] = useState<TeamInterface[]>([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const userTeams = await getUserTeams(userId);
+                setTeams(userTeams);
+            } catch (error) {
+                console.error('Error fetching user teams:', error);
+            }
+        };
+        
+        fetchData();
+    }, []); // Add user as a dependency if it's used in getUserTeams
+    
     return (
         <div className="m-10 flex flex-col col-span-4 gap-y-5">
             <div className="flex justify-between items-center">
                 <Breadcrumb />
-                <UserNav />
+                <UserNav socket={socket} />
             </div>
             <div className="flex justify-between">
                 <div className="flex gap-x-4 w-[50%] items-center">
@@ -72,9 +78,9 @@ export function Teams() {
                 </div>
             </div>
             <div className="flex gap-x-5">
-                {/* {teams.map((team) => (
+                {teams.map((team) => (
                     <Team key={team._id} team={team} />
-                ))} */}
+                ))}
             </div>
         </div>
     )

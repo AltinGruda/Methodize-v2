@@ -15,35 +15,65 @@
   } from "@/components/ui/dropdown-menu"
   import Avatar from "boring-avatars"
   import { Bell } from "lucide-react" 
-  import { useAuth } from "@/context/AuthContext"
+  import { useAuth } from "@/context/useAuth"
+  import { Socket } from 'socket.io-client'
+  import { useEffect, useState } from "react"
+  import { useNavigate } from "react-router-dom"
   
-  export function UserNav() {
+  interface Props {
+    socket: Socket | null;
+  }
+
+  export const UserNav: React.FC<Props> = ({ socket }) => {
     const { logout, user } = useAuth();
+    const [notifications, setNotifications] = useState<{ senderName: string }[]>([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      socket?.on("getNotification", (data) => {
+        console.log("Notification received:", data);
+        setNotifications((prev) => [data, ...prev]);
+        console.log("Updated notifications:", notifications);
+      });
+    }, [socket, notifications]);
+    
+    
+
+    const displayNotification = ({ senderName } : {senderName: string}) => {
+      // if(notifications.length === 0) return <span>No new notifications.</span>
+      return (
+        <span onClick={() => navigate('/teams')} className="hover:cursor-pointer">
+          {`${senderName} invited you to a team.`}
+        </span>
+      );
+    };
 
     return (
       <>
-        
-        <Bell className="mr-5"  />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            {/* <Button variant="ghost" className="relative h-8 w-8 rounded-full"> */}
-              {/* <Avatar className="h-10 w-10"> */}
-                {/* <AvatarImage src="/avatars/01.png" alt="avatar profile image" /> */}
-                {/* uncomment the other avatar images when you decide which to pick */}
+            <Button variant='ghost'>
+              <Bell />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>
+              {notifications.map(noti => displayNotification(noti))}
+            </DropdownMenuLabel>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative rounded-full w-10 h-10">
                   <div className="h-10 w-10">
                       <Avatar
-                              size={40}
-                              name={user?.name}// change this to user.name
-                              variant="beam"
-                              colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
-                              
+                        size={40}
+                        name={user?.name}// change this to user.name
+                        variant="beam"
+                        colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}      
                       />
                   </div>
                 </Button>
-                {/* <AvatarFallback>AG</AvatarFallback> */}
-              {/* </Avatar> */}
-            {/* </Button> */}
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">

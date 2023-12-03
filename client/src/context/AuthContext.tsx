@@ -1,5 +1,5 @@
 // UserContext.tsx
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 export interface User {
   _id: string;
   name: string;
@@ -14,7 +14,7 @@ export interface UserData {
 }
 
 // Define the types for the authentication context
-interface AuthContextProps {
+export interface AuthContextProps {
   isAuth: boolean;
   token: string | null;
   userId: string | null;
@@ -54,20 +54,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const storedUserId = localStorage.getItem('userId');
     const storedUser: string | null = localStorage.getItem('user');
     const parsedUser: User | null = storedUser ? JSON.parse(storedUser) : null;
-    if (storedToken && storedUserId) {
-      setAuthState({
-        isAuth: true,
-        token: storedToken,
-        userId: storedUserId,
-        user: parsedUser,
-        error: null,
-      });
-    } else {
-      setAuthState({
-        ...authState,
-      });
-    }
+  
+    // Use a callback to ensure state consistency
+    setAuthState(prevState => {
+      if (storedToken && storedUserId) {
+        return {
+          ...prevState,
+          isAuth: true,
+          token: storedToken,
+          userId: storedUserId,
+          user: parsedUser,
+          error: null,
+        };
+      } else {
+        return {
+          ...prevState,
+        };
+      }
+    });
   }, []);
+  
 
   const login = async (userData: UserData) => {
     try {
@@ -154,16 +160,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 };
 
-// Create a custom hook to use the AuthContext
-export const useAuth = (): AuthContextProps => {
-  const context = useContext(AuthContext);
 
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-
-  return context;
-};
 
 
 export default AuthContext;
