@@ -20,11 +20,18 @@ const TeamSchema = new mongoose.Schema({
             //     email: String
             //   },
             // },
-            user_id: mongoose.Schema.Types.ObjectId,
-            status: {
-                type: String, // 'pending', 'accepted', 'rejected'
-                default: 'pending',
+            user_id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
             },
+            // status: {
+            //   type: String, // 'pending', 'accepted', 'rejected'
+            //   default: 'pending',
+            // },
+        }],
+    projects: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Project',
         }],
 });
 exports.default = mongoose.model("Team", TeamSchema);

@@ -12,12 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getUserById = exports.allUsers = exports.login = exports.signup = void 0;
 const express_validator_1 = require("express-validator");
 // const bcrypt = require('bcryptjs');
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jwt = require('jsonwebtoken');
 const User_1 = __importDefault(require("../models/User"));
-exports.signup = (req, res, next) => {
+const signup = (req, res, next) => {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         const error = new Error('Validation failed.');
@@ -48,7 +49,8 @@ exports.signup = (req, res, next) => {
         next(err);
     });
 };
-exports.login = (req, res, next) => {
+exports.signup = signup;
+const login = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     let loadedUser;
@@ -93,7 +95,8 @@ exports.login = (req, res, next) => {
         next(err);
     });
 };
-exports.allUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.login = login;
+const allUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield User_1.default.find();
         res.json(users);
@@ -102,7 +105,8 @@ exports.allUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         console.log(error);
     }
 });
-exports.getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.allUsers = allUsers;
+const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield User_1.default.find({ _id: req.params.id });
         res.json(user);
@@ -111,3 +115,4 @@ exports.getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         console.log(error);
     }
 });
+exports.getUserById = getUserById;

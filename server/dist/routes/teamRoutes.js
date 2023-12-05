@@ -12,4 +12,5 @@ router.get('/:id', teamController_1.getTeamById);
 // router.post('/join-team/:teamId/:email', sendRequest);
 // router.put('/accept-request/:teamId/:email', handleResponse)
 router.post('/:teamId/user/:userId', teamController_1.addUserToTeam);
+router.get('/team-users/:teamId', teamController_1.getAllTeamUsers);
 exports.default = router;

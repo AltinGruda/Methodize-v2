@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 import User from "../models/User";
 
 
-exports.signup = (req: Request, res: Response, next: NextFunction) => {
+export const signup = (req: Request, res: Response, next: NextFunction) => {
   const errors: Result = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -40,7 +40,7 @@ exports.signup = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-exports.login = (req: Request, res: Response, next: NextFunction) => {
+export const login = (req: Request, res: Response, next: NextFunction) => {
   const email = req.body.email;
   const password = req.body.password;
   let loadedUser: any;
@@ -87,7 +87,7 @@ exports.login = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-exports.allUsers = async (req: Request, res: Response) => {
+export const allUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find();
 
@@ -97,7 +97,7 @@ exports.allUsers = async (req: Request, res: Response) => {
   }
 }
 
-exports.getUserById = async (req: Request, res: Response) => {
+export const getUserById = async (req: Request, res: Response) => {
   try {
     const user = await User.find({_id: req.params.id});
 

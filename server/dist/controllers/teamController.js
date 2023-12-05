@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addUserToTeam = exports.listTeams = exports.getTeamById = exports.create = void 0;
+exports.getAllTeamUsers = exports.addUserToTeam = exports.listTeams = exports.getTeamById = exports.create = void 0;
 const Team_1 = __importDefault(require("../models/Team"));
 const User_1 = __importDefault(require("../models/User"));
 const mongoose = require('mongoose');
@@ -34,6 +34,8 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 }
             ],
         });
+        // Update the user's teams array with the new team's ObjectId
+        yield User_1.default.findByIdAndUpdate(owner, { $push: { teams: team._id } });
         res.json(team);
     }
     catch (error) {
@@ -132,6 +134,9 @@ const addUserToTeam = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 }
             }
         });
+        yield User_1.default.findOneAndUpdate({ _id: user_id }, {
+            $push: { teams: team_id },
+        });
         res.json(team);
     }
     catch (error) {
@@ -139,3 +144,18 @@ const addUserToTeam = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.addUserToTeam = addUserToTeam;
+const getAllTeamUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { teamId } = req.params;
+        // Find all users with the specified teamId
+        const users = yield User_1.default.find({ teams: teamId });
+        if (!users) {
+            res.json('No users are in this team.');
+        }
+        return res.json(users);
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.getAllTeamUsers = getAllTeamUsers;

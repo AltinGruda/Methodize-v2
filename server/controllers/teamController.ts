@@ -22,7 +22,11 @@ export const create = async (req: Request, res: Response) => {
                     status: 'accepted'
                 }
             ],
-          });
+        });
+
+        // Update the user's teams array with the new team's ObjectId
+        await User.findByIdAndUpdate(owner, { $push: { teams: team._id } });
+
         res.json(team);
     } catch (error) {
         console.log(error);
@@ -119,16 +123,37 @@ export const addUserToTeam = async (req: Request, res: Response, ) => {
           },
           {
             $push: {
-                    members:
-                    {
-                          user_id: user_id,
-                        status: 'accepted'
-                    }
+                members:
+                {
+                        user_id: user_id,
+                    status: 'accepted'
+                }
             }
           }
         );
 
+        await User.findOneAndUpdate({_id: user_id}, {
+            $push: { teams: team_id },
+        })
+
         res.json(team);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getAllTeamUsers = async (req: Request, res: Response) => {
+    try {
+        const { teamId } = req.params
+
+        // Find all users with the specified teamId
+        const users = await User.find({ teams: teamId });
+
+        if(!users) {
+            res.json('No users are in this team.')
+        }
+
+        return res.json(users);
     } catch (error) {
         console.log(error);
     }

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 import connectDB from "./config/database";
 import teamRoutes from './routes/teamRoutes';
 import authRoutes from './routes/authRoutes';
+import projectRoutes from './routes/projectRoutes';
 import cors from 'cors';
 import { Server } from 'socket.io';
 import http from 'http';
@@ -35,6 +36,7 @@ app.use(cors({
 // Routes
 app.use('/auth', authRoutes)
 app.use('/team', teamRoutes)
+app.use('/project', projectRoutes);
 
 app.use((error: Error, req:Request, res: Response) => {
   console.log(error);
