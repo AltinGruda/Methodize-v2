@@ -9,38 +9,31 @@ import { Team } from './pages/team'
 import Authentication from './pages/authentication'
 import { useAuth } from './context/useAuth'
 import PrivateRoutes from './utils/PrivateRoutes'
-import { useEffect, useState } from 'react'
-import { io, Socket } from 'socket.io-client'
+import { Backlog } from './pages/backlog'
+import { Project } from './pages/project'
+import { SocketProvider } from './context/SocketContext'
 
 function App() {
   const {isAuth} = useAuth();
-  const [socket, setSocket] = useState<Socket | null>(null);
-
-  useEffect(() => {
-    const newSocket = io('http://localhost:5000');
-    setSocket(newSocket);
-
-    return () => {
-      // Disconnect the socket when the component unmounts
-      newSocket.disconnect();
-      console.log('Socket Disconnected!')
-    };
-  }, []);
-
   return (
     <div className='grid grid-cols-5 bg-[#D9DADE] min-h-screen'>
       <BrowserRouter>
         {isAuth && <Sidebar />}
+        <SocketProvider>
           <Routes>
-              <Route element={<PrivateRoutes socket={socket} />}>
+              <Route element={<PrivateRoutes />}>
                 <Route path='/projects' element={<Projects />} />
-                <Route path='/kanban' element={<Kanban />} />
+                <Route path='/project/:id' element={<Project />} />
+                <Route path='/backlog/:id' element={<Backlog />} />
+                <Route path='/backlog' element={<Backlog />} />
+                <Route path='/kanban/:id' element={<Kanban />} />
                 <Route path='/noprojects' element={<NoProjects />} />
-                <Route path='/teams' element={<Teams socket={socket} />} />
-                <Route path='/team/:id' element={<Team socket={socket} />}  />
+                <Route path='/teams' element={<Teams />} />
+                <Route path='/team/:id' element={<Team />}  />
               </Route>
               <Route path='/login' element={<Authentication />} />
           </Routes>
+        </SocketProvider>
       </BrowserRouter>
     </div>
   )

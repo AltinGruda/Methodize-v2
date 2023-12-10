@@ -158,3 +158,29 @@ export const getAllTeamUsers = async (req: Request, res: Response) => {
         console.log(error);
     }
 }
+
+export const removeUser = async (req: Request, res: Response) => {
+    try {
+        const { teamId, userId } = req.params;
+
+        // Check if the team and user exist
+        const team = await Team.findById(teamId);
+        const user = await User.findById(userId);
+
+        if (!team || !user) {
+            return res.status(404).json('Team or user not found.');
+        }
+
+        // Remove the user from the team
+        const userIndex = team.members.findIndex((member: any) => member.user_id.toString() === userId);
+        if (userIndex !== -1) {
+            team.members.splice(userIndex, 1);
+            await team.save();
+        }
+
+        return res.json('User removed from the team.');
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json('Error removing user from the team.');
+    }
+};

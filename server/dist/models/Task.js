@@ -22,7 +22,14 @@ const TaskSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Comment',
         }],
-    status: String,
+    status: {
+        type: String,
+        default: 'Backlog',
+    },
+    sprint: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Sprint',
+    },
 });
 exports.default = mongoose.model('Task', TaskSchema);
 ;

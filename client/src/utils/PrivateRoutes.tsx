@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/useAuth';
 import { Outlet, Navigate } from 'react-router-dom';
-import { Socket } from 'socket.io-client'
+import { useSocket } from '@/context/useSocket';
 
-interface Props {
-  socket: Socket | null;
-}
-
-const PrivateRoutes: React.FC<Props> = ({ socket }) => {
+const PrivateRoutes = () => {
   const { isAuth, user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  const {socket} = useSocket();
   
   
   useEffect(() => {

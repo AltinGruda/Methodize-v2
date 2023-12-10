@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commentTask = exports.updateTask = exports.createTask = exports.getProjectTasks = exports.deleteProject = exports.updateProjectTitle = exports.createProject = void 0;
+exports.checkActiveSprint = exports.finishSprint = exports.startSprint = exports.commentTask = exports.updateTask = exports.createTask = exports.getTasks = exports.getProjectTasks = exports.deleteProject = exports.updateProjectTitle = exports.getProjectById = exports.getProjectsByTeam = exports.createProject = void 0;
 const Project_1 = __importDefault(require("../models/Project"));
 const Team_1 = __importDefault(require("../models/Team")); //
 const Task_1 = __importDefault(require("../models/Task"));
 const Comment_1 = __importDefault(require("../models/Comment"));
+const Sprint_1 = __importDefault(require("../models/Sprint"));
 // /project/:teamId/create-project
 const createProject = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -42,6 +43,39 @@ const createProject = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.createProject = createProject;
+const getProjectsByTeam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { teamId } = req.params;
+        // Check if the team exists
+        const team = yield Team_1.default.findById(teamId);
+        if (!team) {
+            return res.status(404).json('Team not found.');
+        }
+        // Retrieve all projects of the team
+        const projects = yield Project_1.default.find({ team: teamId });
+        return res.json(projects);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json('Error fetching projects.');
+    }
+});
+exports.getProjectsByTeam = getProjectsByTeam;
+const getProjectById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { projectId } = req.params;
+        const project = yield Project_1.default.findById(projectId);
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+        return res.json(project);
+    }
+    catch (error) {
+        console.error('Error getting project:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+exports.getProjectById = getProjectById;
 // /project/:projectId
 const updateProjectTitle = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -94,14 +128,14 @@ const deleteProject = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.deleteProject = deleteProject;
 const getProjectTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { projectId } = req.params;
+        const { projectId, sprintId } = req.params;
         // Check if the project exists
         const project = yield Project_1.default.findById(projectId);
         if (!project) {
             return res.status(404).json('Project not found.');
         }
-        // Retrieve all tasks associated with the project
-        const tasks = yield Task_1.default.find({ projectId });
+        // Retrieve tasks based on projectId and optional sprintId
+        const tasks = yield Task_1.default.find({ projectId, sprint: sprintId });
         return res.json(tasks);
     }
     catch (error) {
@@ -110,6 +144,24 @@ const getProjectTasks = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.getProjectTasks = getProjectTasks;
+const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { projectId } = req.params;
+        // Check if the project exists
+        const project = yield Project_1.default.findById(projectId);
+        if (!project) {
+            return res.status(404).json('Project not found.');
+        }
+        // Retrieve tasks based on projectId and optional sprintId
+        const tasks = yield Task_1.default.find({ projectId });
+        return res.json(tasks);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json('Error fetching project tasks.');
+    }
+});
+exports.getTasks = getTasks;
 const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, assigneeId, due_date, projectId, comments, status } = req.body;
@@ -194,3 +246,69 @@ const commentTask = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.commentTask = commentTask;
+const startSprint = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { projectId, durationInDays } = req.body;
+        // Create a sprint with a start date and end date
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(startDate.getDate() + durationInDays);
+        const activeSprint = yield Sprint_1.default.findOne({
+            projectId,
+            endDate: { $gt: new Date() },
+            isFinished: false, // Consider only active sprints
+        });
+        if (activeSprint) {
+            return res.status(400).json('Cannot start a new sprint. There is already an active sprint.');
+        }
+        const sprint = yield Sprint_1.default.create({
+            projectId,
+            startDate,
+            endDate,
+        });
+        // Update tasks in the backlog (excluding 'Archived' tasks) to be part of the sprint
+        yield Task_1.default.updateMany({ projectId, status: { $nin: ['Archived'] } }, { sprint: sprint._id, status: 'To Do' });
+        return res.json(sprint);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json('Error starting sprint.');
+    }
+});
+exports.startSprint = startSprint;
+const finishSprint = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { sprintId } = req.params;
+        // Check if all tasks in the sprint are completed
+        const incompleteTasks = yield Task_1.default.find({ sprint: sprintId, status: { $ne: 'Completed' } });
+        if (incompleteTasks.length > 0) {
+            return res.status(400).json('Cannot finish sprint. Some tasks are not completed.');
+        }
+        // Update the sprint's end date and set isFinished to true to mark it as finished
+        const sprint = yield Sprint_1.default.findByIdAndUpdate(sprintId, { endDate: new Date(), isFinished: true });
+        // Archive tasks from the completed sprint
+        yield Task_1.default.updateMany({ sprint: sprintId, status: 'Completed' }, { isArchived: true, status: 'Archived' });
+        return res.json('Sprint finished successfully.');
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json('Error finishing sprint.');
+    }
+});
+exports.finishSprint = finishSprint;
+const checkActiveSprint = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { projectId } = req.params;
+        const activeSprint = yield Sprint_1.default.findOne({
+            projectId,
+            endDate: { $gt: new Date() },
+            isFinished: false, // Only consider sprints that are not finished
+        });
+        return res.json(activeSprint);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json('Error checking active sprint.');
+    }
+});
+exports.checkActiveSprint = checkActiveSprint;

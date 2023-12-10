@@ -8,11 +8,6 @@ import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getUserTeams } from "@/api/apiCalls";
 import { useAuth } from "@/context/useAuth";
-import { Socket } from "socket.io-client";
-
-interface Props {
-    socket: Socket | null;
-}
 
 export interface TeamInterface {
     _id: string;
@@ -20,9 +15,10 @@ export interface TeamInterface {
     owner: string;
     members: [];
 }
-export const Teams: React.FC<Props> = ({socket}) => {
+export const Teams = () => {
     const {userId} = useAuth();
     const [teams, setTeams] = useState<TeamInterface[]>([]);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -35,12 +31,12 @@ export const Teams: React.FC<Props> = ({socket}) => {
         
         fetchData();
     }, []); // Add user as a dependency if it's used in getUserTeams
-    
+    console.log(teams);
     return (
         <div className="m-10 flex flex-col col-span-4 gap-y-5">
             <div className="flex justify-between items-center">
                 <Breadcrumb />
-                <UserNav socket={socket} />
+                <UserNav />
             </div>
             <div className="flex justify-between">
                 <div className="flex gap-x-4 w-[50%] items-center">
@@ -79,7 +75,7 @@ export const Teams: React.FC<Props> = ({socket}) => {
             </div>
             <div className="flex gap-x-5">
                 {teams.map((team) => (
-                    <Team key={team._id} team={team} />
+                    team._id && <Team key={team._id} team={team} />
                 ))}
             </div>
         </div>

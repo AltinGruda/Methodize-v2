@@ -13,4 +13,5 @@ router.get('/:id', teamController_1.getTeamById);
 // router.put('/accept-request/:teamId/:email', handleResponse)
 router.post('/:teamId/user/:userId', teamController_1.addUserToTeam);
 router.get('/team-users/:teamId', teamController_1.getAllTeamUsers);
+router.delete('/:teamId/remove-user/:userId', teamController_1.removeUser);
 exports.default = router;

@@ -4,6 +4,7 @@ import Team from '../models/Team'; //
 import Task from '../models/Task';
 import User from '../models/User';
 import Comment from '../models/Comment';
+import Sprint from '../models/Sprint';
 
 // /project/:teamId/create-project
 export const createProject = async (req: Request, res: Response) => {
@@ -32,6 +33,44 @@ export const createProject = async (req: Request, res: Response) => {
         return res.status(500).json('Error creating the project.');
     }
 };
+
+export const getProjectsByTeam = async (req: Request, res: Response) => {
+    try {
+        const { teamId } = req.params;
+
+        // Check if the team exists
+        const team = await Team.findById(teamId);
+        if (!team) {
+            return res.status(404).json('Team not found.');
+        }
+
+        // Retrieve all projects of the team
+        const projects = await Project.find({ team: teamId });
+
+        return res.json(projects);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json('Error fetching projects.');
+    }
+};
+
+export const getProjectById = async (req: Request, res: Response) => {
+    try {
+        const { projectId } = req.params;
+    
+        const project = await Project.findById(projectId);
+    
+        if (!project) {
+          return res.status(404).json({ error: 'Project not found' });
+        }
+    
+        return res.json(project);
+      } catch (error) {
+        console.error('Error getting project:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+}
+
 
 // /project/:projectId
 export const updateProjectTitle = async (req: Request, res: Response) => {
@@ -91,6 +130,26 @@ export const deleteProject = async (req: Request, res: Response) => {
 
 export const getProjectTasks = async (req: Request, res: Response) => {
     try {
+        const { projectId, sprintId } = req.params;
+
+        // Check if the project exists
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).json('Project not found.');
+        }
+
+          // Retrieve tasks based on projectId and optional sprintId
+          const tasks = await Task.find({ projectId, sprint: sprintId });
+
+        return res.json(tasks);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json('Error fetching project tasks.');
+    }
+};
+
+export const getTasks = async (req: Request, res: Response) => {
+    try {
         const { projectId } = req.params;
 
         // Check if the project exists
@@ -99,8 +158,8 @@ export const getProjectTasks = async (req: Request, res: Response) => {
             return res.status(404).json('Project not found.');
         }
 
-        // Retrieve all tasks associated with the project
-        const tasks = await Task.find({ projectId });
+          // Retrieve tasks based on projectId and optional sprintId
+          const tasks = await Task.find({ projectId });
 
         return res.json(tasks);
     } catch (error) {
@@ -142,7 +201,6 @@ export const updateTask = async (req: Request, res: Response) => {
     try {
         const { taskId } = req.params;
         const { name, assigneeId, due_date, completed, comments, status } = req.body;
-
         // Check if the task exists
         const task = await Task.findById(taskId);
         if (!task) {
@@ -192,5 +250,83 @@ export const commentTask = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json('Error commenting on the task.');
+    }
+};
+
+export const startSprint = async (req: Request, res: Response) => {
+    try {
+        const { projectId, durationInDays } = req.body;
+
+        // Create a sprint with a start date and end date
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(startDate.getDate() + durationInDays);
+
+        const activeSprint = await Sprint.findOne({
+            projectId,
+            endDate: { $gt: new Date() },
+            isFinished: false, // Consider only active sprints
+        });
+
+        if (activeSprint) {
+            return res.status(400).json('Cannot start a new sprint. There is already an active sprint.');
+        }
+
+        const sprint = await Sprint.create({
+            projectId,
+            startDate,
+            endDate,
+        });
+
+        // Update tasks in the backlog (excluding 'Archived' tasks) to be part of the sprint
+        await Task.updateMany({ projectId, status: { $nin: ['Archived'] } }, { sprint: sprint._id, status: 'To Do' });
+
+        return res.json(sprint);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json('Error starting sprint.');
+    }
+};
+
+
+
+export const finishSprint = async (req: Request, res: Response) => {
+    try {
+        const { sprintId } = req.params;
+
+        // Check if all tasks in the sprint are completed
+        const incompleteTasks = await Task.find({ sprint: sprintId, status: { $ne: 'Completed' } });
+        if (incompleteTasks.length > 0) {
+            return res.status(400).json('Cannot finish sprint. Some tasks are not completed.');
+        }
+
+        // Update the sprint's end date and set isFinished to true to mark it as finished
+        const sprint = await Sprint.findByIdAndUpdate(sprintId, { endDate: new Date(), isFinished: true });
+
+        // Archive tasks from the completed sprint
+        await Task.updateMany({ sprint: sprintId, status: 'Completed' }, { isArchived: true, status: 'Archived' });
+
+        return res.json('Sprint finished successfully.');
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json('Error finishing sprint.');
+    }
+};
+
+
+export const checkActiveSprint = async (req: Request, res: Response) => {
+    try {
+        const { projectId } = req.params;
+
+        const activeSprint = await Sprint.findOne({
+            projectId,
+            endDate: { $gt: new Date() },
+            isFinished: false, // Only consider sprints that are not finished
+        });
+
+        return res.json(activeSprint);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json('Error checking active sprint.');
     }
 };

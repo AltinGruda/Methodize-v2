@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllTeamUsers = exports.addUserToTeam = exports.listTeams = exports.getTeamById = exports.create = void 0;
+exports.removeUser = exports.getAllTeamUsers = exports.addUserToTeam = exports.listTeams = exports.getTeamById = exports.create = void 0;
 const Team_1 = __importDefault(require("../models/Team"));
 const User_1 = __importDefault(require("../models/User"));
 const mongoose = require('mongoose');
@@ -159,3 +159,26 @@ const getAllTeamUsers = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.getAllTeamUsers = getAllTeamUsers;
+const removeUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { teamId, userId } = req.params;
+        // Check if the team and user exist
+        const team = yield Team_1.default.findById(teamId);
+        const user = yield User_1.default.findById(userId);
+        if (!team || !user) {
+            return res.status(404).json('Team or user not found.');
+        }
+        // Remove the user from the team
+        const userIndex = team.members.findIndex((member) => member.user_id.toString() === userId);
+        if (userIndex !== -1) {
+            team.members.splice(userIndex, 1);
+            yield team.save();
+        }
+        return res.json('User removed from the team.');
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json('Error removing user from the team.');
+    }
+});
+exports.removeUser = removeUser;
