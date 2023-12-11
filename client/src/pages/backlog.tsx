@@ -262,12 +262,12 @@ export function Backlog() {
 
           {/* Archived Tasks */}
           <Collapsible>
-            <div className="flex items-center justify-between space-x-4 px-4 bg-slate-50">
-              <h4 className="text-sm font-semibold">
-                Archived Tasks
-              </h4>
+            <div className="flex items-center justify-between space-x-4 bg-slate-50">
               <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="sm" className="w-9 p-0">
+                <Button variant="ghost" size="sm" className="w-full">
+                <h4 className="text-sm font-semibold mr-5">
+                  Archived Tasks
+                </h4>
                   <ChevronsUpDown className="h-4 w-4" />
                   <span className="sr-only">Toggle</span>
                 </Button>

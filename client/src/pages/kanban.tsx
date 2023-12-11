@@ -24,6 +24,15 @@ export function Kanban() {
         }
         getActiveSprintTasks();
     }, [])
+    
+
+    if(activeSprint === undefined) {
+        return (
+            <>
+                No sprint is active
+            </>
+        )
+    }
 
     console.log("Active sprint tasks:", activeSprint);
 
@@ -53,7 +62,7 @@ export function Kanban() {
                     </div>
                 </div>
             </div>
-            <KanbanCards />
+            <KanbanCards tasks={activeSprint} />
         </div>
     )
 }
