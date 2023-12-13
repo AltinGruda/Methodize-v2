@@ -13,27 +13,28 @@ import { Backlog } from './pages/backlog'
 import { Project } from './pages/project'
 import { SocketProvider } from './context/SocketContext'
 
+
 function App() {
   const {isAuth} = useAuth();
   return (
     <div className='grid grid-cols-5 bg-[#D9DADE] min-h-screen'>
       <BrowserRouter>
-        {isAuth && <Sidebar />}
-        <SocketProvider>
-          <Routes>
-              <Route element={<PrivateRoutes />}>
-                <Route path='/projects' element={<Projects />} />
-                <Route path='/project/:id' element={<Project />} />
-                <Route path='/backlog/:id' element={<Backlog />} />
-                <Route path='/backlog' element={<Backlog />} />
-                <Route path='/kanban/:id' element={<Kanban />} />
-                <Route path='/noprojects' element={<NoProjects />} />
-                <Route path='/teams' element={<Teams />} />
-                <Route path='/team/:id' element={<Team />}  />
-              </Route>
-              <Route path='/login' element={<Authentication />} />
-          </Routes>
-        </SocketProvider>
+          {isAuth && <Sidebar />}
+          <SocketProvider>
+            <Routes>
+                <Route element={<PrivateRoutes />}>
+                  <Route path='/projects' element={<Projects />} />
+                  <Route path='/project/:id' element={<Project />} />
+                  <Route path='/backlog/:id' element={<Backlog />} />
+                  <Route path='/backlog' element={<Backlog />} />
+                  <Route path='/kanban/:id' element={<Kanban />} />
+                  <Route path='/noprojects' element={<NoProjects />} />
+                  <Route path='/teams' element={<Teams />} />
+                  <Route path='/team/:id' element={<Team />}  />
+                </Route>
+                <Route path='/login' element={<Authentication />} />
+            </Routes>
+          </SocketProvider>
       </BrowserRouter>
     </div>
   )

@@ -312,3 +312,35 @@ export const updateTask = async (status: string, taskId: string) => {
     }
 };
 
+export const updateTaskOrder = async (status: string, taskIds: string[]) => {
+  try {
+      const response = await fetch("http://localhost:5000/project/tasks", {
+          method: 'PUT',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status, taskIds }),
+      });
+
+      if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error);
+      }
+
+      const result = await response.json();
+
+      toast({
+          title: "Task status changed successfully."
+      });
+
+      return result;
+  } catch (error) {
+      toast({
+          title: "Cannot change the status.",
+          description: "Please try again.",
+          variant: "destructive"
+      });
+      console.error(error);
+      // Handle the error appropriately, e.g., show a message to the user
+  }
+};

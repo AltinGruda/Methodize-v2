@@ -5,12 +5,37 @@ import { Card } from "./ui/card";
 import { Task } from "@/models/Task";
 import React from "react";
 import { Plus } from "lucide-react";
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface Props {
     tasks: Task[]
 }
 
 export const KanbanCards: React.FC<Props> = ({tasks}) => {
+
+    const renderDroppableColumn = (status: string, columnTasks: Task[]) => (
+        <Droppable droppableId={status} key={status}>
+          {(provided) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              {columnTasks.map((task, index) => (
+                <Draggable draggableId={task._id} index={index} key={task._id}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <TaskCard key={task._id} task={task} />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+    );
+
     return (
         <div className="grid grid-cols-4 gap-4">
             <div>
@@ -24,9 +49,7 @@ export const KanbanCards: React.FC<Props> = ({tasks}) => {
                     <Separator className="my-2"/>
                 </div>
                 <Card className="bg-[#E8E8E8]">
-                    {tasks?.filter((task: Task) => task.status === "To Do").map((task) => (
-                        <TaskCard key={task._id} task={task} />
-                    ))}
+                    {renderDroppableColumn('To Do', tasks.filter((task) => task.status === 'To Do'))}
                     <div className="flex justify-center items-center p-2">
                         <Button variant="ghost">
                             <Plus />
@@ -46,9 +69,7 @@ export const KanbanCards: React.FC<Props> = ({tasks}) => {
                     <Separator className="my-2"/>
                 </div>
                 <Card className="bg-[#E8E8E8]">
-                    {tasks?.filter((task: Task) => task.status === "In progress").map((task) => (
-                        <TaskCard key={task._id} task={task} />
-                    ))}
+                    {renderDroppableColumn('In progress', tasks.filter((task) => task.status === 'In progress'))}
                     <div className="flex justify-center items-center p-2">
                         <Button variant="ghost">
                             <Plus />
@@ -68,9 +89,8 @@ export const KanbanCards: React.FC<Props> = ({tasks}) => {
                     <Separator className="my-2"/>
                 </div>
                 <Card className="bg-[#E8E8E8]">
-                    {tasks?.filter((task: Task) => task.status === "In review").map((task) => (
-                        <TaskCard key={task._id} task={task} />
-                    ))}                    <div className="flex justify-center items-center p-2">
+                    {renderDroppableColumn('In review', tasks.filter((task) => task.status === 'In review'))}                   
+                    <div className="flex justify-center items-center p-2">
                         <Button variant="ghost">
                             <Plus />
                             Add Task
@@ -89,9 +109,7 @@ export const KanbanCards: React.FC<Props> = ({tasks}) => {
                     <Separator className="my-2"/>
                 </div>
                 <Card className="bg-[#E8E8E8]">
-                    {tasks?.filter((task: Task) => task.status === "Completed").map((task) => (
-                        <TaskCard key={task._id} task={task} />
-                    ))}
+                    {renderDroppableColumn('Completed', tasks.filter((task) => task.status === 'Completed'))}
                     <div className="flex justify-center items-center p-2">
                         <Button variant="ghost">
                             <Plus />
