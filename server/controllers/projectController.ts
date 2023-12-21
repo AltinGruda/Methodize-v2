@@ -170,7 +170,7 @@ export const getTasks = async (req: Request, res: Response) => {
 
 export const createTask = async (req: Request, res: Response) => {
     try {
-        const { name, assigneeId, due_date, projectId, comments, status } = req.body;
+        const { name, assigneeId, due_date, projectId, comments, status, description , sprint} = req.body;
         // Check if the project exists
         const project = await Project.findById(projectId);
         if (!project) {
@@ -185,6 +185,8 @@ export const createTask = async (req: Request, res: Response) => {
             projectId,
             comments,
             status,
+            description,
+            sprint
         });
 
         // Update the project's tasks array with the new task's ObjectId
@@ -200,7 +202,7 @@ export const createTask = async (req: Request, res: Response) => {
 export const updateTask = async (req: Request, res: Response) => {
     try {
         const { taskId } = req.params;
-        const { name, assigneeId, due_date, completed, comments, status } = req.body;
+        const { name, assigneeId, due_date, completed, comments, status, description } = req.body;
         // Check if the task exists
         const task = await Task.findById(taskId);
         if (!task) {
@@ -214,7 +216,6 @@ export const updateTask = async (req: Request, res: Response) => {
         if (completed !== undefined) task.completed = completed;
         if (comments) task.comments = comments;
         if (status) task.status = status;
-
         // Save the updated task
         await task.save();
 
@@ -222,6 +223,32 @@ export const updateTask = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json('Error updating the task.');
+    }
+};
+
+export const deleteTask = async (req: Request, res: Response) => {
+    try {
+        const taskId = req.params.taskId;
+
+        // Check if the task exists
+        const task = await Task.findById(taskId);
+        if (!task) {
+            return res.status(404).json('Task not found.');
+        }
+
+        // Get the projectId associated with the task
+        const projectId = task.projectId;
+
+        // Delete the task
+        await Task.findByIdAndDelete(taskId);
+
+        // Remove the task's ObjectId from the project's tasks array
+        await Project.findByIdAndUpdate(projectId, { $pull: { tasks: taskId } });
+
+        return res.json('Task deleted successfully.');
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json('Error deleting the task.');
     }
 };
 

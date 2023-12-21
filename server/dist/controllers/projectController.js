@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkActiveSprint = exports.finishSprint = exports.startSprint = exports.commentTask = exports.updateTask = exports.createTask = exports.getTasks = exports.getProjectTasks = exports.deleteProject = exports.updateProjectTitle = exports.getProjectById = exports.getProjectsByTeam = exports.createProject = void 0;
+exports.checkActiveSprint = exports.finishSprint = exports.startSprint = exports.commentTask = exports.deleteTask = exports.updateTask = exports.createTask = exports.getTasks = exports.getProjectTasks = exports.deleteProject = exports.updateProjectTitle = exports.getProjectById = exports.getProjectsByTeam = exports.createProject = void 0;
 const Project_1 = __importDefault(require("../models/Project"));
 const Team_1 = __importDefault(require("../models/Team")); //
 const Task_1 = __importDefault(require("../models/Task"));
@@ -164,7 +164,7 @@ const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getTasks = getTasks;
 const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, assigneeId, due_date, projectId, comments, status } = req.body;
+        const { name, assigneeId, due_date, projectId, comments, status, description, sprint } = req.body;
         // Check if the project exists
         const project = yield Project_1.default.findById(projectId);
         if (!project) {
@@ -178,6 +178,8 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             projectId,
             comments,
             status,
+            description,
+            sprint
         });
         // Update the project's tasks array with the new task's ObjectId
         yield Project_1.default.findByIdAndUpdate(projectId, { $push: { tasks: task._id } });
@@ -192,7 +194,7 @@ exports.createTask = createTask;
 const updateTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { taskId } = req.params;
-        const { name, assigneeId, due_date, completed, comments, status } = req.body;
+        const { name, assigneeId, due_date, completed, comments, status, description } = req.body;
         // Check if the task exists
         const task = yield Task_1.default.findById(taskId);
         if (!task) {
@@ -221,6 +223,28 @@ const updateTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.updateTask = updateTask;
+const deleteTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const taskId = req.params.taskId;
+        // Check if the task exists
+        const task = yield Task_1.default.findById(taskId);
+        if (!task) {
+            return res.status(404).json('Task not found.');
+        }
+        // Get the projectId associated with the task
+        const projectId = task.projectId;
+        // Delete the task
+        yield Task_1.default.findByIdAndDelete(taskId);
+        // Remove the task's ObjectId from the project's tasks array
+        yield Project_1.default.findByIdAndUpdate(projectId, { $pull: { tasks: taskId } });
+        return res.json('Task deleted successfully.');
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json('Error deleting the task.');
+    }
+});
+exports.deleteTask = deleteTask;
 const commentTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { taskId } = req.params;

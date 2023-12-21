@@ -1,5 +1,5 @@
 import express from 'express';
-import { checkActiveSprint, commentTask, createProject, createTask, deleteProject, finishSprint, getProjectById, getProjectTasks, getProjectsByTeam, getTasks, startSprint, updateProjectTitle, updateTask } from '../controllers/projectController';
+import { checkActiveSprint, commentTask, createProject, createTask, deleteProject, deleteTask, finishSprint, getProjectById, getProjectTasks, getProjectsByTeam, getTasks, startSprint, updateProjectTitle, updateTask } from '../controllers/projectController';
 
 const router = express.Router();
 
@@ -26,6 +26,9 @@ router.get('/tasks/:projectId', getTasks);
 
 // Create a task inside a project
 router.post('/create-task', createTask);
+
+// Delete a task of a project
+router.delete('/delete-task/:taskId', deleteTask);
 
 // Update a task inside a project
 router.put('/task/:taskId', updateTask);

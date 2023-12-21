@@ -29,6 +29,9 @@ const TaskSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Sprint',
     },
+    description: {
+        type: String
+    }
 });
 
 export default mongoose.model('Task', TaskSchema);;

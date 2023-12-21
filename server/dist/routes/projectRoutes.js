@@ -22,6 +22,8 @@ router.get('/tasks/:projectId/:sprintId', projectController_1.getProjectTasks);
 router.get('/tasks/:projectId', projectController_1.getTasks);
 // Create a task inside a project
 router.post('/create-task', projectController_1.createTask);
+// Delete a task of a project
+router.delete('/delete-task/:taskId', projectController_1.deleteTask);
 // Update a task inside a project
 router.put('/task/:taskId', projectController_1.updateTask);
 // Comment inside a task
