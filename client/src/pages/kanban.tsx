@@ -1,4 +1,4 @@
-import { activeSprintTasks, checkActiveSprint, updateTask, updateTaskOrder } from "@/api/apiCalls";
+import { activeSprintTasks, checkActiveSprint, deleteTask, updateStatus, updateTask } from "@/api/apiCalls";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { KanbanCards } from "@/components/kanban-cards";
 import { UserNav } from "@/components/user-nav";
@@ -18,13 +18,13 @@ export function Kanban() {
     
     useEffect(() => {
         const getActiveSprintTasks = async () => {
-        try {
-            const sprint = await checkActiveSprint(param.id);
-            const sprintTasks = await activeSprintTasks(sprint.projectId, sprint._id);
-            setActiveSprint(sprintTasks);
-        } catch (error) {
-            console.log(error);
-        }
+            try {
+                const sprint = await checkActiveSprint(param.id);
+                const sprintTasks = await activeSprintTasks(sprint.projectId, sprint._id);
+                setActiveSprint(sprintTasks);
+            } catch (error) {
+                console.log(error);
+            }
         };
 
         getActiveSprintTasks();
@@ -63,7 +63,7 @@ export function Kanban() {
                 }
             } else {
                 // Update the status of the task in the backend
-                await updateTask(destinationStatus, taskId);
+                await updateStatus(taskId, destinationStatus);
     
                 if (currentSprint) {
                     // Refresh the active sprint tasks after updating
@@ -75,6 +75,16 @@ export function Kanban() {
             console.error(error);
         }
   };
+
+    const handleDeleteTask = async (taskId: string) => {
+        try {
+            await deleteTask(taskId);
+            // Update the local state by filtering out the deleted task
+            setActiveSprint((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+        } catch (error) {
+            console.error(error);
+        }
+    };
   
 
     return (
@@ -105,7 +115,7 @@ export function Kanban() {
             </div>
             
             <DragDropContext onDragEnd={handleDragEnd}>
-                <KanbanCards tasks={activeSprint} />
+                <KanbanCards tasks={activeSprint} onDeleteTask={handleDeleteTask} setActiveSprint={setActiveSprint} />
             </DragDropContext>
         </div>
     )

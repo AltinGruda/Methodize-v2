@@ -238,7 +238,7 @@ export function Backlog() {
                                   <DialogTrigger asChild>
                                     <Button onClick={ async () => {
                                       try {
-                                        await updateTask(changeStatus, task._id);
+                                        await updateTask(task._id, {status: changeStatus});
                                         setChangeStatus('');
                                         const tasks = await getTasks(param.id);
                                         const activeTasks = tasks.filter((task: Task) => task.status !== "Archived");

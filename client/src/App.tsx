@@ -26,7 +26,6 @@ function App() {
                   <Route path='/projects' element={<Projects />} />
                   <Route path='/project/:id' element={<Project />} />
                   <Route path='/backlog/:id' element={<Backlog />} />
-                  <Route path='/backlog' element={<Backlog />} />
                   <Route path='/kanban/:id' element={<Kanban />} />
                   <Route path='/noprojects' element={<NoProjects />} />
                   <Route path='/teams' element={<Teams />} />

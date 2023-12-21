@@ -134,7 +134,6 @@ export const Team = () => {
                               />
                               <DialogTrigger asChild>
                                 <Button onClick={() => {
-                                  // http://localhost:5000/team/656b9393d30231c33cb5ba39/user/656a5170440865d55b2d7817
                                   async function inviteUser() {
                                     try {
                                       await fetch(`http://localhost:5000/team/${param.id}/user/${user._id}`, {

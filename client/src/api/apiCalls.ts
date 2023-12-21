@@ -114,7 +114,7 @@ export async function getProjectById(projectId: string) {
     }
 }
 
-export const createTask = async (name: string, date: string, status: string, projectId: string | undefined) => {
+export const createTask = async (name: string, date: string, status: string, projectId: string | undefined, assigneeId: string | undefined = undefined, sprint: string | undefined) => {
     try {  
       // Make the API request using fetch directly
       const response = await fetch('http://localhost:5000/project/create-task', {
@@ -126,7 +126,9 @@ export const createTask = async (name: string, date: string, status: string, pro
             name: name,
             due_date: date,
             status: status,
-            projectId: projectId
+            projectId: projectId,
+            assigneeId: assigneeId,
+            sprint: sprint
         }),
       });
   
@@ -279,14 +281,48 @@ export const finishSprint = async (sprintId: string | undefined) => {
     }
 };
 
-export const updateTask = async (status: string, taskId: string) => {
+// to do: find a way to dynamically update 1 or more field
+export const updateStatus = async (taskId: string, status: string) => {
+  try {
+    const response = await fetch(`http://localhost:5000/project/task/${taskId}`, {
+      method: 'PUT', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({status: status}),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error);
+    }
+
+    const result = await response.json();
+
+    toast({
+      title: "Task updated successfully."
+    })
+
+    return result;
+  } catch (error) {
+    toast({
+      title: "Cannot update the task.",
+      description: "Please try again.",
+      variant: "destructive"
+    })
+    console.error(error);
+    // Handle the error appropriately, e.g., show a message to the user
+  }
+};
+
+export const updateTask = async (taskId: string, updateParams: Record<string, string>) => {
     try {
       const response = await fetch(`http://localhost:5000/project/task/${taskId}`, {
         method: 'PUT', 
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({status: status}),
+        body: JSON.stringify(updateParams),
       });
 
       if (!response.ok) {
@@ -297,13 +333,13 @@ export const updateTask = async (status: string, taskId: string) => {
       const result = await response.json();
 
       toast({
-        title: "Task status changed successfully."
+        title: "Task updated successfully."
       })
 
       return result;
     } catch (error) {
       toast({
-        title: "Cannot change the status.",
+        title: "Cannot update the task.",
         description: "Please try again.",
         variant: "destructive"
       })
@@ -312,35 +348,28 @@ export const updateTask = async (status: string, taskId: string) => {
     }
 };
 
-export const updateTaskOrder = async (status: string, taskIds: string[]) => {
+export const deleteTask = async (taskId: string) => {
   try {
-      const response = await fetch("http://localhost:5000/project/tasks", {
-          method: 'PUT',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status, taskIds }),
-      });
+    const response = await fetch(`http://localhost:5000/project/delete-task/${taskId}`, {
+      method: 'DELETE'
+    });
+    const data = await response.json();
 
-      if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error);
-      }
+    if (!response.ok) {
+      throw new Error(data);    
+    }
 
-      const result = await response.json();
+    toast({
+      title: "Task deleted successfully."
+    })
 
-      toast({
-          title: "Task status changed successfully."
-      });
-
-      return result;
+    return data;
   } catch (error) {
-      toast({
-          title: "Cannot change the status.",
-          description: "Please try again.",
-          variant: "destructive"
-      });
       console.error(error);
-      // Handle the error appropriately, e.g., show a message to the user
+      toast({
+        title: "Error deleting task.",
+        description: "Please try again."
+      })
+      throw new Error('Error deleting task.');
   }
 };
