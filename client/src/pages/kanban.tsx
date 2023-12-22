@@ -1,4 +1,4 @@
-import { activeSprintTasks, checkActiveSprint, deleteTask, updateStatus, updateTask } from "@/api/apiCalls";
+import { activeSprintTasks, checkActiveSprint, deleteTask, updateStatus } from "@/api/apiCalls";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { KanbanCards } from "@/components/kanban-cards";
 import { UserNav } from "@/components/user-nav";

@@ -1,4 +1,4 @@
-import { Clock, MessageCircle, MoreVertical } from "lucide-react"
+import { Clock, Info, MessageCircle, MoreVertical } from "lucide-react"
 import { CardTitle, CardContent } from "./ui/card"
 import { Button } from "./ui/button"
 import { Task } from "@/models/Task"
@@ -12,6 +12,9 @@ import { Textarea } from "./ui/textarea"
 import { useState } from "react"
 import { activeSprintTasks, checkActiveSprint, updateTask } from "@/api/apiCalls"
 import { useParams } from "react-router-dom"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet"
+import { Separator } from "./ui/separator"
+import CommentBox from "./comment-box"
 
 interface TaskCardProps {
     task: Task
@@ -31,11 +34,13 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
         const daysLeft = Math.round(differenceInTime / (1000 * 3600 * 24));
         return daysLeft;
     }
+    console.log(task.description)
     return (
         <div className="p-2 m-2 flex flex-col bg-[#EDEDED] rounded-md items-start space-y-3">
             <div className="flex justify-between items-start w-full">
                 <CardTitle className="text-md font-normal">{task.name}</CardTitle>
                 <div className="flex justify-end">
+                    
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                     <Button variant='ghost'>
@@ -43,10 +48,87 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
                     </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
+                        {/* View task */}
                         <DropdownMenuLabel className="hover:bg-accent hover:text-accent-foreground">
+                            <Sheet>
+                                <SheetTrigger className="w-full h-10 px-4 py-2">
+                                    View
+                                </SheetTrigger>
+                                <SheetContent className="w-full h-3/4" side="bottom">
+                                    <SheetHeader className="mb-5">
+                                        <div className="flex">
+                                            <span className="font-bold text-[#6D7789]">{task.status} / </span>
+                                            <span className="font-bold text-[#38baec]">&nbsp;Task-{task._id.slice(-3)}</span>
+                                        </div>
+                                        <SheetTitle className="text-lg text-gray-700">{task.name}</SheetTitle>
+                                        <Separator />
+                                    </SheetHeader>
+                                    <div className="grid grid-cols-6 w-full h-[80%] max-h-[80%]">
+                                        <div className="border-r-2 col-span-3">
+                                            {task.description && 
+                                                <p className="text-lg text-gray-700">{task.description}</p>
+                                            }
+                                            {!task.description && 
+                                                <div className="p-5">
+                                                    <p className="mb-5 text-lg text-gray-700">
+                                                    A task is a work unit derived from a user story, typically handled by one person. In Scrum, tasks break down larger goals into manageable parts for sprints.
+                                                    </p>
+                                                    <p className="text-lg text-gray-700 font-bold">Why Describe Tasks:</p>
+                                                    <ol className="list-decimal pl-5 mb-5">
+                                                        <li className="text-gray-700">
+                                                            <strong>Break Down User Stories:</strong> Clarify and manage smaller components of user stories.
+                                                        </li>
+                                                        <li className="text-gray-700">
+                                                            <strong>Empower Team Members:</strong> Provide clear instructions, empowering team members.
+                                                        </li>
+                                                        <li className="text-gray-700">
+                                                            <strong>Facilitate Collaboration:</strong> Ensure everyone understands tasks, promoting seamless collaboration on the task board.
+                                                        </li>
+                                                    </ol>
+
+                                                    <p className="text-gray-700 flex gap-x-2"><Info />Navigate to the 'Edit Task' section to provide and add your task description.</p>
+                                              </div>
+                                            }
+                                        </div>
+                                        <div className="border-r-2 col-span-1 p-5">
+                                            <div className="flex flex-col space-y-6">
+                                                <div className="p-4 bg-white border border-gray-300 rounded-lg shadow">
+                                                    <h2 className="text-xl font-bold text-gray-800 mb-2">Due Date</h2>
+                                                    <div className="flex items-center">
+                                                        <span className="text-gray-600">Deadline:</span>
+                                                        <span className="ml-2 text-red-500 font-bold">{dateDaysLeft(task.due_date)}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="p-4 bg-white border border-gray-300 rounded-lg shadow">
+                                                    <h2 className="text-xl font-bold text-gray-800 mb-2">Assigned To</h2>
+                                                    <div className="flex items-center">
+                                                        <img src="https://source.unsplash.com/random" alt="Avatar" className="w-8 h-8 rounded-full" />
+                                                        <span className="ml-2 text-gray-800 font-bold">John Doe</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="p-4 bg-white border border-gray-300 rounded-lg shadow">
+                                                    <h2 className="text-xl font-bold text-gray-800 mb-2">Status</h2>
+                                                    <div className="flex items-center">
+                                                        <span className="text-gray-600">Task:</span>
+                                                        <span className="ml-2 text-blue-500 font-bold">{task.status}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <CommentBox />
+                                        </div>
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
+                        </DropdownMenuLabel>
+                        <DropdownMenuLabel className="hover:bg-accent hover:text-accent-foreground">
+                            {/* Edit dialog */}
                             <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="ghost">Edit</Button>
+                                <DialogTrigger asChild className="w-full">
+                                    <Button variant="ghost" >Edit</Button>
                                 </DialogTrigger>
                                 <DialogContent className="sm:max-w-2xl">
                                     <DialogHeader>
@@ -116,7 +198,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
                         <DropdownMenuLabel className="hover:bg-accent hover:text-accent-foreground">
                             {/* Delete alert */}
                             <AlertDialog>
-                            <AlertDialogTrigger asChild>
+                            <AlertDialogTrigger asChild className="w-full">
                                 <Button variant="ghost">Delete</Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
@@ -141,7 +223,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
             </div>
 
             <CardContent className="flex items-center justify-start w-full p-0">
-                <MessageCircle className="text-gray-400" />
+                <MessageCircle className="text-gray-400 transform -scale-100 rotate-90" />
                 <span className="text-gray-400">65</span>
                 <div className="w-full flex justify-end gap-3 items-center">
                     <Button variant="ghost" className="bg-[#EDEBFE] rounded-full w-fit h-fit gap-2 text-[#5521B5] hover:text-[#5521B5]"><Clock className="w-5 h-5" />{dateDaysLeft(task.due_date)} days left</Button>

@@ -9,7 +9,7 @@ import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { activeSprintTasks, checkActiveSprint, createTask, getAllUsers, getTasks } from "@/api/apiCalls";
+import { activeSprintTasks, checkActiveSprint, createTask, getAllUsers } from "@/api/apiCalls";
 import { User } from "@/context/AuthContext";
 import Avatar from "boring-avatars";
 import { useParams } from "react-router-dom";
@@ -102,26 +102,6 @@ export const KanbanCards: React.FC<Props> = ({tasks, onDeleteTask, setActiveSpri
                 <Card className="bg-[#E8E8E8]">
                     {renderDroppableColumn('To Do', tasks.filter((task) => task.status === 'To Do'))}
                     <div className="flex justify-center items-center p-2">
-                        <Button variant="ghost">
-                            <Plus />
-                            Add Task
-                        </Button>
-                    </div>
-                </Card>
-            </div>
-            <div>
-                <div className="flex items-center">
-                    <div className="flex gap-2">
-                            <Button variant="secondary">IN PROGRESS</Button>
-                            <Button variant="secondary" className="rounded-full bg-[#E5E5E5]">{tasks?.filter((task: Task) => task.status === "In progress").length}</Button>
-                    </div>
-                </div>
-                <div>
-                    <Separator className="my-2"/>
-                </div>
-                <Card className="bg-[#E8E8E8]">
-                    {renderDroppableColumn('In progress', tasks.filter((task) => task.status === 'In progress'))}
-                    <div className="flex justify-center items-center p-2">
                         {/* Create task modal */}
                         <Dialog>
                             <DialogTrigger asChild>
@@ -154,12 +134,8 @@ export const KanbanCards: React.FC<Props> = ({tasks, onDeleteTask, setActiveSpri
                                         <Label htmlFor="status" className="text-right">
                                             Status
                                         </Label>
-                                        <select className="w-full p-2 border border-gray-300 rounded col-span-3" id="status" value={status} onChange={(e) => setStatus(e.target.value)}>
-                                            <option value="" disabled>Select an option</option>
-                                            <option value="To do">To do</option>
-                                            <option value="In progress">In progress</option>
-                                            <option value="In review">In review</option>
-                                            <option value="Backlog">Backlog</option>
+                                        <select className="w-full p-2 border border-gray-300 rounded col-span-3" id="status" onChange={(e) => setStatus(e.target.value)}>
+                                            <option value="To Do" selected>To do</option>
                                         </select>
                                         <Label htmlFor="assignee" className="text-right">
                                             Assignee
@@ -216,8 +192,8 @@ export const KanbanCards: React.FC<Props> = ({tasks, onDeleteTask, setActiveSpri
                                     <Button type="submit" onClick={ async () => {
                                         try {
                                             const sprint = await checkActiveSprint(param.id);
+                                            await createTask(name, date, 'To Do', param.id, selectedUser?._id, sprint._id);
                                             const sprintTasks = await activeSprintTasks(sprint.projectId, sprint._id);
-                                            await createTask(name, date, status, param.id, selectedUser?._id, sprint._id);
                                             setSelectedUser(null);
                                             setActiveSprint(sprintTasks);
                                         } catch (error) {
@@ -239,7 +215,130 @@ export const KanbanCards: React.FC<Props> = ({tasks, onDeleteTask, setActiveSpri
             <div>
                 <div className="flex items-center">
                     <div className="flex gap-2">
-                        <Button variant="secondary">IN PROGRESS</Button>
+                            <Button variant="secondary">IN PROGRESS</Button>
+                            <Button variant="secondary" className="rounded-full bg-[#E5E5E5]">{tasks?.filter((task: Task) => task.status === "In progress").length}</Button>
+                    </div>
+                </div>
+                <div>
+                    <Separator className="my-2"/>
+                </div>
+                <Card className="bg-[#E8E8E8]">
+                    {renderDroppableColumn('In progress', tasks.filter((task) => task.status === 'In progress'))}
+                    <div className="flex justify-center items-center p-2">
+                        {/* Create task modal */}
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="ghost">Add Task</Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>Create a task</DialogTitle>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label htmlFor="name" className="text-right">
+                                            Name
+                                        </Label>
+                                        <Input
+                                            id="name"
+                                            type="text"
+                                            className="col-span-3"
+                                            onChange={(e) => setName(e.target.value)}
+                                        />
+                                        <Label htmlFor="date" className="text-right">
+                                            Due Date
+                                        </Label>
+                                        <Input
+                                            id="date"
+                                            type="date"
+                                            className="col-span-3"
+                                            onChange={(e) => setDate(e.target.value)}
+                                        />
+                                        <Label htmlFor="status" className="text-right">
+                                            Status
+                                        </Label>
+                                        <select className="w-full p-2 border border-gray-300 rounded col-span-3" id="status" value={status} onChange={(e) => setStatus(e.target.value)}>
+                                            <option value="In progress">In progress</option>
+                                        </select>
+                                        <Label htmlFor="assignee" className="text-right">
+                                            Assignee
+                                        </Label>
+                                        <div className="relative col-span-3">
+                                            <Input
+                                                id="assignee"
+                                                onChange={(e) => {
+                                                    handleUserSearch(e.target.value); // Trigger user search
+                                                }}
+                                            />
+
+                                            {/* Display filtered users */}
+                                            {users && users.length > 0 && (
+                                            <div className="absolute bg-white w-full mt-1 border border-gray-300 rounded shadow-md">
+                                                {users.map((user) => (
+                                                    <div
+                                                        key={user._id}
+                                                        className={`p-2 cursor-pointer hover:bg-gray-100 ${
+                                                            selectedUser === user ? 'bg-gray-100' : ''
+                                                        } flex justify-between items-center`}
+                                                    >
+                                                        {user.name}
+                                                        <Button
+                                                            variant="default"
+                                                            className={`p-2 w-7 h-7 text-white bg-blue-500 hover:bg-blue-600 rounded-b ${
+                                                                isUserAdded && selectedUser?._id === user._id
+                                                                ? 'bg-green-500 hover:bg-green-600'
+                                                                : 'bg-blue-500 hover:bg-blue-600'
+                                                            }`}
+                                                            onClick={() => handleUserSelection(user)}
+                                                            >
+                                                            {isUserAdded && selectedUser?._id === user._id ? <Check /> : <Plus />}
+                                                        </Button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            )}
+                                        </div>
+                                        {selectedUser && 
+                                            <div className="flex justify-end">
+                                                <Avatar
+                                                    size={40}
+                                                    name={selectedUser?.name}// change this to user.name
+                                                    variant="beam"
+                                                    colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}      
+                                                />
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <DialogTrigger asChild>
+                                    <Button type="submit" onClick={ async () => {
+                                        try {
+                                            const sprint = await checkActiveSprint(param.id);
+                                            await createTask(name, date, "In progress", param.id, selectedUser?._id, sprint._id);
+                                            const sprintTasks = await activeSprintTasks(sprint.projectId, sprint._id);
+                                            setSelectedUser(null);
+                                            setActiveSprint(sprintTasks);
+                                        } catch (error) {
+                                            console.error(error);
+                                            toast({
+                                                title: "You cannot create tasks when sprint is not started.",
+                                                description: "Please head to backlog and start sprint to create tasks.",
+                                                variant: "destructive"
+                                              })
+                                        }
+                                    } }>Create</Button>
+                                    </DialogTrigger>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                </Card>
+            </div>
+            <div>
+                <div className="flex items-center">
+                    <div className="flex gap-2">
+                        <Button variant="secondary">IN REVIEW</Button>
                         <Button variant="secondary" className="rounded-full bg-[#E5E5E5]">{tasks?.filter((task: Task) => task.status === "In review").length}</Button>
                     </div>
                 </div>
@@ -249,10 +348,113 @@ export const KanbanCards: React.FC<Props> = ({tasks, onDeleteTask, setActiveSpri
                 <Card className="bg-[#E8E8E8]">
                     {renderDroppableColumn('In review', tasks.filter((task) => task.status === 'In review'))}                   
                     <div className="flex justify-center items-center p-2">
-                        <Button variant="ghost">
-                            <Plus />
-                            Add Task
-                        </Button>
+                        {/* Create task modal */}
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="ghost">Add Task</Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>Create a task</DialogTitle>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label htmlFor="name" className="text-right">
+                                            Name
+                                        </Label>
+                                        <Input
+                                            id="name"
+                                            type="text"
+                                            className="col-span-3"
+                                            onChange={(e) => setName(e.target.value)}
+                                        />
+                                        <Label htmlFor="date" className="text-right">
+                                            Due Date
+                                        </Label>
+                                        <Input
+                                            id="date"
+                                            type="date"
+                                            className="col-span-3"
+                                            onChange={(e) => setDate(e.target.value)}
+                                        />
+                                        <Label htmlFor="status" className="text-right">
+                                            Status
+                                        </Label>
+                                        <select className="w-full p-2 border border-gray-300 rounded col-span-3" id="status" value={status} onChange={(e) => setStatus(e.target.value)}>
+                                            <option value="In review">In review</option>
+                                        </select>
+                                        <Label htmlFor="assignee" className="text-right">
+                                            Assignee
+                                        </Label>
+                                        <div className="relative col-span-3">
+                                            <Input
+                                                id="assignee"
+                                                onChange={(e) => {
+                                                    handleUserSearch(e.target.value); // Trigger user search
+                                                }}
+                                            />
+
+                                            {/* Display filtered users */}
+                                            {users && users.length > 0 && (
+                                            <div className="absolute bg-white w-full mt-1 border border-gray-300 rounded shadow-md">
+                                                {users.map((user) => (
+                                                    <div
+                                                        key={user._id}
+                                                        className={`p-2 cursor-pointer hover:bg-gray-100 ${
+                                                            selectedUser === user ? 'bg-gray-100' : ''
+                                                        } flex justify-between items-center`}
+                                                    >
+                                                        {user.name}
+                                                        <Button
+                                                            variant="default"
+                                                            className={`p-2 w-7 h-7 text-white bg-blue-500 hover:bg-blue-600 rounded-b ${
+                                                                isUserAdded && selectedUser?._id === user._id
+                                                                ? 'bg-green-500 hover:bg-green-600'
+                                                                : 'bg-blue-500 hover:bg-blue-600'
+                                                            }`}
+                                                            onClick={() => handleUserSelection(user)}
+                                                            >
+                                                            {isUserAdded && selectedUser?._id === user._id ? <Check /> : <Plus />}
+                                                        </Button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            )}
+                                        </div>
+                                        {selectedUser && 
+                                            <div className="flex justify-end">
+                                                <Avatar
+                                                    size={40}
+                                                    name={selectedUser?.name}// change this to user.name
+                                                    variant="beam"
+                                                    colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}      
+                                                />
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <DialogTrigger asChild>
+                                    <Button type="submit" onClick={ async () => {
+                                        try {
+                                            const sprint = await checkActiveSprint(param.id);
+                                            await createTask(name, date, 'In review', param.id, selectedUser?._id, sprint._id);
+                                            const sprintTasks = await activeSprintTasks(sprint.projectId, sprint._id);
+                                            setSelectedUser(null);
+                                            setActiveSprint(sprintTasks);
+                                        } catch (error) {
+                                            console.error(error);
+                                            toast({
+                                                title: "You cannot create tasks when sprint is not started.",
+                                                description: "Please head to backlog and start sprint to create tasks.",
+                                                variant: "destructive"
+                                              })
+                                        }
+                                    } }>Create</Button>
+                                    </DialogTrigger>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </Card>
             </div>
@@ -269,10 +471,113 @@ export const KanbanCards: React.FC<Props> = ({tasks, onDeleteTask, setActiveSpri
                 <Card className="bg-[#E8E8E8]">
                     {renderDroppableColumn('Completed', tasks.filter((task) => task.status === 'Completed'))}
                     <div className="flex justify-center items-center p-2">
-                        <Button variant="ghost">
-                            <Plus />
-                            Add Task
-                        </Button>
+                        {/* Create task modal */}
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="ghost">Add Task</Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                    <DialogTitle>Create a task</DialogTitle>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label htmlFor="name" className="text-right">
+                                            Name
+                                        </Label>
+                                        <Input
+                                            id="name"
+                                            type="text"
+                                            className="col-span-3"
+                                            onChange={(e) => setName(e.target.value)}
+                                        />
+                                        <Label htmlFor="date" className="text-right">
+                                            Due Date
+                                        </Label>
+                                        <Input
+                                            id="date"
+                                            type="date"
+                                            className="col-span-3"
+                                            onChange={(e) => setDate(e.target.value)}
+                                        />
+                                        <Label htmlFor="status" className="text-right">
+                                            Status
+                                        </Label>
+                                        <select className="w-full p-2 border border-gray-300 rounded col-span-3" id="status" value={status} onChange={(e) => setStatus(e.target.value)}>
+                                            <option value="Completed">Completed</option>
+                                        </select>
+                                        <Label htmlFor="assignee" className="text-right">
+                                            Assignee
+                                        </Label>
+                                        <div className="relative col-span-3">
+                                            <Input
+                                                id="assignee"
+                                                onChange={(e) => {
+                                                    handleUserSearch(e.target.value); // Trigger user search
+                                                }}
+                                            />
+
+                                            {/* Display filtered users */}
+                                            {users && users.length > 0 && (
+                                            <div className="absolute bg-white w-full mt-1 border border-gray-300 rounded shadow-md">
+                                                {users.map((user) => (
+                                                    <div
+                                                        key={user._id}
+                                                        className={`p-2 cursor-pointer hover:bg-gray-100 ${
+                                                            selectedUser === user ? 'bg-gray-100' : ''
+                                                        } flex justify-between items-center`}
+                                                    >
+                                                        {user.name}
+                                                        <Button
+                                                            variant="default"
+                                                            className={`p-2 w-7 h-7 text-white bg-blue-500 hover:bg-blue-600 rounded-b ${
+                                                                isUserAdded && selectedUser?._id === user._id
+                                                                ? 'bg-green-500 hover:bg-green-600'
+                                                                : 'bg-blue-500 hover:bg-blue-600'
+                                                            }`}
+                                                            onClick={() => handleUserSelection(user)}
+                                                            >
+                                                            {isUserAdded && selectedUser?._id === user._id ? <Check /> : <Plus />}
+                                                        </Button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            )}
+                                        </div>
+                                        {selectedUser && 
+                                            <div className="flex justify-end">
+                                                <Avatar
+                                                    size={40}
+                                                    name={selectedUser?.name}// change this to user.name
+                                                    variant="beam"
+                                                    colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}      
+                                                />
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <DialogFooter>
+                                    <DialogTrigger asChild>
+                                    <Button type="submit" onClick={ async () => {
+                                        try {
+                                            const sprint = await checkActiveSprint(param.id);
+                                            await createTask(name, date, 'Completed', param.id, selectedUser?._id, sprint._id);
+                                            const sprintTasks = await activeSprintTasks(sprint.projectId, sprint._id);
+                                            setSelectedUser(null);
+                                            setActiveSprint(sprintTasks);
+                                        } catch (error) {
+                                            console.error(error);
+                                            toast({
+                                                title: "You cannot create tasks when sprint is not started.",
+                                                description: "Please head to backlog and start sprint to create tasks.",
+                                                variant: "destructive"
+                                              })
+                                        }
+                                    } }>Create</Button>
+                                    </DialogTrigger>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </Card>
             </div>

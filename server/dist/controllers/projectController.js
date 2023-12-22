@@ -213,6 +213,8 @@ const updateTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             task.comments = comments;
         if (status)
             task.status = status;
+        if (description)
+            task.description = description;
         // Save the updated task
         yield task.save();
         return res.json('Task updated successfully.');

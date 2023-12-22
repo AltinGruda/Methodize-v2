@@ -216,6 +216,7 @@ export const updateTask = async (req: Request, res: Response) => {
         if (completed !== undefined) task.completed = completed;
         if (comments) task.comments = comments;
         if (status) task.status = status;
+        if (description) task.description = description;
         // Save the updated task
         await task.save();
 

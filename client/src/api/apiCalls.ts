@@ -317,6 +317,7 @@ export const updateStatus = async (taskId: string, status: string) => {
 
 export const updateTask = async (taskId: string, updateParams: Record<string, string>) => {
     try {
+      console.log(updateParams);
       const response = await fetch(`http://localhost:5000/project/task/${taskId}`, {
         method: 'PUT', 
         headers: {

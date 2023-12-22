@@ -5,5 +5,6 @@ export interface Task {
   due_date: string
   status: string
   sprint: string
-  order: number
+  description: string
+  assigneeId: string
 }
