@@ -118,7 +118,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
                                             </div>
                                         </div>
                                         <div className="col-span-2">
-                                            <CommentBox />
+                                            <CommentBox taskId={task._id} />
                                         </div>
                                     </div>
                                 </SheetContent>

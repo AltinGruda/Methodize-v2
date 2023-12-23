@@ -13,7 +13,6 @@ import { Backlog } from './pages/backlog'
 import { Project } from './pages/project'
 import { SocketProvider } from './context/SocketContext'
 
-
 function App() {
   const {isAuth} = useAuth();
   return (

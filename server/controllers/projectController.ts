@@ -281,6 +281,25 @@ export const commentTask = async (req: Request, res: Response) => {
     }
 };
 
+export const getTaskComments = async (req: Request, res: Response) => {
+    try {
+      const { taskId } = req.params;
+  
+      // Check if the task exists
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json('Task not found.');
+      }
+  
+      const comments = await Comment.find({ taskId });
+  
+      return res.json(comments);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json('Error retrieving comments.');
+    }
+};
+
 export const startSprint = async (req: Request, res: Response) => {
     try {
         const { projectId, durationInDays } = req.body;

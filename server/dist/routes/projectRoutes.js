@@ -28,6 +28,8 @@ router.delete('/delete-task/:taskId', projectController_1.deleteTask);
 router.put('/task/:taskId', projectController_1.updateTask);
 // Comment inside a task
 router.post('/task/:taskId/comment', projectController_1.commentTask);
+// Get all comments of a task
+router.get('/task/:taskId/comments', projectController_1.getTaskComments);
 // Start a sprint for a project
 router.post('/start-sprint', projectController_1.startSprint);
 // Finish a sprint for a project

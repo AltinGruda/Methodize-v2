@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkActiveSprint = exports.finishSprint = exports.startSprint = exports.commentTask = exports.deleteTask = exports.updateTask = exports.createTask = exports.getTasks = exports.getProjectTasks = exports.deleteProject = exports.updateProjectTitle = exports.getProjectById = exports.getProjectsByTeam = exports.createProject = void 0;
+exports.checkActiveSprint = exports.finishSprint = exports.startSprint = exports.getTaskComments = exports.commentTask = exports.deleteTask = exports.updateTask = exports.createTask = exports.getTasks = exports.getProjectTasks = exports.deleteProject = exports.updateProjectTitle = exports.getProjectById = exports.getProjectsByTeam = exports.createProject = void 0;
 const Project_1 = __importDefault(require("../models/Project"));
 const Team_1 = __importDefault(require("../models/Team")); //
 const Task_1 = __importDefault(require("../models/Task"));
@@ -272,6 +272,23 @@ const commentTask = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.commentTask = commentTask;
+const getTaskComments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { taskId } = req.params;
+        // Check if the task exists
+        const task = yield Task_1.default.findById(taskId);
+        if (!task) {
+            return res.status(404).json('Task not found.');
+        }
+        const comments = yield Comment_1.default.find({ taskId });
+        return res.json(comments);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json('Error retrieving comments.');
+    }
+});
+exports.getTaskComments = getTaskComments;
 const startSprint = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { projectId, durationInDays } = req.body;

@@ -1,5 +1,5 @@
 import express from 'express';
-import { checkActiveSprint, commentTask, createProject, createTask, deleteProject, deleteTask, finishSprint, getProjectById, getProjectTasks, getProjectsByTeam, getTasks, startSprint, updateProjectTitle, updateTask } from '../controllers/projectController';
+import { checkActiveSprint, commentTask, createProject, createTask, deleteProject, deleteTask, finishSprint, getProjectById, getProjectTasks, getProjectsByTeam, getTaskComments, getTasks, startSprint, updateProjectTitle, updateTask } from '../controllers/projectController';
 
 const router = express.Router();
 
@@ -35,6 +35,9 @@ router.put('/task/:taskId', updateTask);
 
 // Comment inside a task
 router.post('/task/:taskId/comment', commentTask);
+
+// Get all comments of a task
+router.get('/task/:taskId/comments', getTaskComments)
 
 // Start a sprint for a project
 router.post('/start-sprint', startSprint);

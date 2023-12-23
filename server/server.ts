@@ -7,6 +7,7 @@ import projectRoutes from './routes/projectRoutes';
 import cors from 'cors';
 import { Server } from 'socket.io';
 import http from 'http';
+import { getTaskComments } from './controllers/projectController';
 
 const app = express();
 const server = http.createServer(app);
@@ -81,7 +82,7 @@ io.on('connection', (socket) => {
     } else {
       console.error(`Receiver ${receiverName} not found or missing socketId`);
     }
-  });
+  })
   
 
   socket.on("disconnect", () => {
