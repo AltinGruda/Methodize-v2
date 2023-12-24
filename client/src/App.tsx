@@ -12,6 +12,7 @@ import PrivateRoutes from './utils/PrivateRoutes'
 import { Backlog } from './pages/backlog'
 import { Project } from './pages/project'
 import { SocketProvider } from './context/SocketContext'
+import { Notes } from './components/notes'
 
 function App() {
   const {isAuth} = useAuth();
@@ -19,6 +20,7 @@ function App() {
     <div className='grid grid-cols-5 bg-[#D9DADE] min-h-screen'>
       <BrowserRouter>
           {isAuth && <Sidebar />}
+          <Notes />
           <SocketProvider>
             <Routes>
                 <Route element={<PrivateRoutes />}>

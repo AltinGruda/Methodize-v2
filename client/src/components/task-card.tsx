@@ -34,7 +34,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
         const daysLeft = Math.round(differenceInTime / (1000 * 3600 * 24));
         return daysLeft;
     }
-    console.log(task.description)
     return (
         <div className="p-2 m-2 flex flex-col bg-[#EDEDED] rounded-md items-start space-y-3">
             <div className="flex justify-between items-start w-full">
