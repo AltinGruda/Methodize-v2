@@ -13,7 +13,7 @@ export function Team({team} :TeamProps) {
 
     return (
         <div>
-            <Card className="m-10 flex flex-col justify-center items-center bg-[#EDEDED] hover:scale-105 hover:shadow-2xl transition duration-500 w-full gap-y-3">
+            <Card className="m-10 flex flex-col justify-center items-center bg-[#EDEDED] hover:scale-105 hover:shadow-2xl transition w-full gap-y-3">
                 <CardHeader className="flex items-center">
                     <Avatar
                         size={40}
@@ -23,9 +23,6 @@ export function Team({team} :TeamProps) {
                     />
                     <CardTitle className="font-bold">{team.name}</CardTitle>
                     <span className="text-[#727D8F] font-semibold">{team.members.length} members</span>
-                    <div className="flex items-center gap-x-2">
-                        <span className="font-semibold">{team.owner}</span>
-                    </div>
                     <div onClick={() => navigate(`/team/${team._id}`)}>
                         <ButtonUnderlined />
                     </div>

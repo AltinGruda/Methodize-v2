@@ -96,6 +96,36 @@ export async function getProjectsByTeam(teamId: string | undefined) {
     }
 }
 
+// Get team projects when user has multiple teams
+export async function getProjectsByTeams(teamIds: string[] | undefined) {
+  try {
+      if (!teamIds || teamIds.length === 0) {
+          // Handle the case when there are no teamIds
+          return [];
+      }
+      // Use Promise.all to concurrently fetch projects for each team
+      const projectPromises = teamIds.map(async (teamId) => {
+          const response = await fetch(`http://localhost:5000/project/${teamId}`);
+          
+          if (!response.ok) {
+              throw new Error(`Failed to fetch projects for team ${teamId}. Status: ${response.status}`);
+          }
+
+          return response.json();
+      });
+
+      const projectsArrays = await Promise.all(projectPromises);
+
+      // Flatten the array of arrays into a single array of projects
+      const projects = projectsArrays.flat();
+
+      return projects;
+  } catch (error) {
+      console.log("Error getting projects by team ids:", error);
+      throw error;
+  }
+}
+
 export async function getProjectById(projectId: string) {
     try {
         const response = await fetch(`http://localhost:5000/project/byId/${projectId}`);
@@ -175,6 +205,27 @@ export const getTasks = async (projectId: string | undefined) => {
       return allTasks;
     } catch (error) {
       console.error('Error creating task:', error);
+      // Handle the error or throw it again based on your requirements
+      throw error;
+    }
+  };
+
+// Get all tasks of a specific user 
+  export const getUserTasks = async (userId: string | undefined) => {
+    try {  
+      // Make the API request using fetch directly
+      const response = await fetch(`http://localhost:5000/project/tasks/${userId}`);
+  
+      // Check if the response is successful
+      if (!response.ok) {
+        throw new Error(`Failed to get tasks. Status: ${response.status}`);
+      }
+  
+      // Parse the JSON data from the response
+      const allTasks = await response.json();
+      return allTasks;
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
       // Handle the error or throw it again based on your requirements
       throw error;
     }

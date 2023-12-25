@@ -113,7 +113,7 @@ export function Kanban() {
                 <div className="flex justify-end">
                     <div className="mb-4">
                         <label htmlFor="filter" className="font-bold mr-2">
-                            Filter By Assignee:
+                            Filter By:
                         </label>
                         <select
                             id="filter"

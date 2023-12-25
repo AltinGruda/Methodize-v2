@@ -1,5 +1,5 @@
 import express from 'express';
-import { checkActiveSprint, commentTask, createProject, createTask, deleteProject, deleteTask, finishSprint, getProjectById, getProjectTasks, getProjectsByTeam, getTaskComments, getTasks, startSprint, updateProjectTitle, updateTask } from '../controllers/projectController';
+import { checkActiveSprint, commentTask, createProject, createTask, deleteProject, deleteTask, finishSprint, getAllTasks, getProjectById, getProjectTasks, getProjectsByTeam, getTaskComments, getTasks, startSprint, updateProjectTitle, updateTask } from '../controllers/projectController';
 
 const router = express.Router();
 
@@ -17,6 +17,9 @@ router.put('/:projectId', updateProjectTitle);
 
 // Delete a specific project
 router.delete('/delete/:projectId', deleteProject);
+
+// Get all tasks of an user (from every project, even the archived ones)
+router.get('/tasks/:userId', getAllTasks);
 
 // Get all tasks of a specific project sprint
 router.get('/tasks/:projectId/:sprintId', getProjectTasks);

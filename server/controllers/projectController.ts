@@ -148,6 +148,22 @@ export const getProjectTasks = async (req: Request, res: Response) => {
     }
 };
 
+// Get all tasks of an user
+export const getAllTasks = async (req: Request, res: Response) => {
+    try {
+        const { userId } = req.params;
+        const tasks = await Task.find({ assigneeId: userId });
+        if(!tasks) {
+            return res.json('User has no tasks yet.')
+        }
+
+        return res.json(tasks)
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json('Error fetching all tasks.')
+    }
+}
+
 export const getTasks = async (req: Request, res: Response) => {
     try {
         const { projectId } = req.params;

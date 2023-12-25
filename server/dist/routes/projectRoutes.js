@@ -16,6 +16,8 @@ router.get('/byId/:projectId', projectController_1.getProjectById);
 router.put('/:projectId', projectController_1.updateProjectTitle);
 // Delete a specific project
 router.delete('/delete/:projectId', projectController_1.deleteProject);
+// Get all tasks of an user (from every project, even the archived ones)
+router.get('/tasks/:userId', projectController_1.getAllTasks);
 // Get all tasks of a specific project sprint
 router.get('/tasks/:projectId/:sprintId', projectController_1.getProjectTasks);
 // Get all tasks of a specific project

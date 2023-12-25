@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkActiveSprint = exports.finishSprint = exports.startSprint = exports.getTaskComments = exports.commentTask = exports.deleteTask = exports.updateTask = exports.createTask = exports.getTasks = exports.getProjectTasks = exports.deleteProject = exports.updateProjectTitle = exports.getProjectById = exports.getProjectsByTeam = exports.createProject = void 0;
+exports.checkActiveSprint = exports.finishSprint = exports.startSprint = exports.getTaskComments = exports.commentTask = exports.deleteTask = exports.updateTask = exports.createTask = exports.getTasks = exports.getAllTasks = exports.getProjectTasks = exports.deleteProject = exports.updateProjectTitle = exports.getProjectById = exports.getProjectsByTeam = exports.createProject = void 0;
 const Project_1 = __importDefault(require("../models/Project"));
 const Team_1 = __importDefault(require("../models/Team")); //
 const Task_1 = __importDefault(require("../models/Task"));
@@ -144,6 +144,22 @@ const getProjectTasks = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.getProjectTasks = getProjectTasks;
+// Get all tasks of an user
+const getAllTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { userId } = req.params;
+        const tasks = yield Task_1.default.find({ assigneeId: userId });
+        if (!tasks) {
+            return res.json('User has no tasks yet.');
+        }
+        return res.json(tasks);
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json('Error fetching all tasks.');
+    }
+});
+exports.getAllTasks = getAllTasks;
 const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { projectId } = req.params;

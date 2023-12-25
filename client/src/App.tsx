@@ -13,6 +13,7 @@ import { Backlog } from './pages/backlog'
 import { Project } from './pages/project'
 import { SocketProvider } from './context/SocketContext'
 import { Notes } from './components/notes'
+import { Dashboard } from './pages/dashboard'
 
 function App() {
   const {isAuth} = useAuth();
@@ -24,6 +25,7 @@ function App() {
           <SocketProvider>
             <Routes>
                 <Route element={<PrivateRoutes />}>
+                  <Route path='/' element={<Dashboard />} />
                   <Route path='/projects' element={<Projects />} />
                   <Route path='/project/:id' element={<Project />} />
                   <Route path='/backlog/:id' element={<Backlog />} />

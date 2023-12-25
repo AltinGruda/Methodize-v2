@@ -14,20 +14,16 @@ export function Project() {
                 <Breadcrumb />
                 <UserNav />
             </div>
-            <div className="grid grid-cols-2 w-full h-full">
-                <div className="flex justify-start items-center flex-col">
-                    <p className="p-2">Backlog</p>
-                    <div className="border rounded-2xl flex justify-center items-center bg-blue-400 w-1/3 h-1/3 hover:scale-105 hover:shadow-2xl transition duration-500 hover:cursor-pointer" onClick={() => navigate(`/backlog/${param.id}`)}>
-                        <ListTodo className="text-white" />
-                    </div>
+            <div className="grid grid-cols-2 gap-8">
+                <div className="flex justify-center items-center flex-col bg-blue-500 text-white rounded-lg p-8 hover:shadow-lg transition duration-300 hover:cursor-pointer transform hover:scale-105" onClick={() => navigate(`/backlog/${param.id}`)}>
+                    <ListTodo className="text-4xl mb-4" />
+                    <p className="text-lg font-semibold">Backlog</p>
                 </div>
-                <div className="flex justify-start items-start flex-col">
-                    <p className="p-2">Kanban Board</p>
-                    <div className="border rounded-2xl flex justify-center items-center bg-blue-400 w-1/3 h-1/3 hover:scale-105 hover:shadow-2xl transition duration-500" onClick={() => navigate(`/kanban/${param.id}`)}>
-                        <KanbanSquare className="text-white" />
-                    </div>
+                <div className="flex justify-center items-center flex-col bg-blue-500 text-white rounded-lg p-8 hover:shadow-lg transition duration-300 hover:cursor-pointer transform hover:scale-105" onClick={() => navigate(`/kanban/${param.id}`)}>
+                    <KanbanSquare className="text-4xl mb-4" />
+                    <p className="text-lg font-semibold">Kanban Board</p>
                 </div>
             </div>
         </div>
-    )
+    );
 }

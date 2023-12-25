@@ -1,7 +1,7 @@
 import { Check, Trash } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-const Notes = () => {
+export const Notes = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false); // New state for closing animation
   const [noteText, setNoteText] = useState('');

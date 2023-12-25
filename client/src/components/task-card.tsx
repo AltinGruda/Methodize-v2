@@ -1,4 +1,4 @@
-import { Clock, Info, MessageCircle, MoreVertical } from "lucide-react"
+import { Check, Clock, Info, MessageCircle, MoreVertical, Plus } from "lucide-react"
 import { CardTitle, CardContent } from "./ui/card"
 import { Button } from "./ui/button"
 import { Task } from "@/models/Task"
@@ -10,11 +10,12 @@ import { Label } from "./ui/label"
 import { Input } from "./ui/input"
 import { Textarea } from "./ui/textarea"
 import { useState } from "react"
-import { activeSprintTasks, checkActiveSprint, updateTask } from "@/api/apiCalls"
+import { activeSprintTasks, checkActiveSprint, getAllUsers, updateTask } from "@/api/apiCalls"
 import { useParams } from "react-router-dom"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet"
 import { Separator } from "./ui/separator"
 import CommentBox from "./comment-box"
+import { User } from "@/context/AuthContext"
 
 interface TaskCardProps {
     task: Task
@@ -26,6 +27,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
     const [taskParams, setTaskParams] = useState({});
     const param = useParams();
 
+    const [allUsers, setAllUsers] = useState<User[]>();
+    const [users, setUsers] = useState<User[]>(); // Add this state for users
+    const [selectedUser, setSelectedUser] = useState<User | null>();
+
+    const [isUserAdded, setIsUserAdded] = useState(false);
+
     function dateDaysLeft(date: string) {
         const dateNow = new Date(Date.now());
         const taskDate = new Date(date);
@@ -34,6 +41,39 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
         const daysLeft = Math.round(differenceInTime / (1000 * 3600 * 24));
         return daysLeft;
     }
+
+    // Function to handle user search
+    const handleUserSearch = async (query) => {
+        // Check if the input is empty
+        if (!query.trim()) {
+          // If it's empty, you might want to display a default set of users or skip the search
+          setUsers([]);
+          return;
+        }
+    
+        const fetchUsers = await getAllUsers();
+        setAllUsers(fetchUsers);
+        const filteredUsers = allUsers?.filter((user) =>
+          user.name.toLowerCase().includes(query.toLowerCase())
+        );
+        setUsers(filteredUsers);
+    };
+
+    // Function to handle user selection
+    const handleUserSelection = (user) => {
+        if (!isUserAdded) {
+            // User is not added, so add the user
+            setSelectedUser(user);
+            setTaskParams({...taskParams, assigneeId: user._id});
+          } else {
+            // User is added, so remove the user
+            setSelectedUser(null);
+          }
+      
+          setIsUserAdded(!isUserAdded);
+    };
+
+
     return (
         <div className="p-2 m-2 flex flex-col bg-[#EDEDED] rounded-md items-start space-y-3">
             <div className="flex justify-between items-start w-full">
@@ -166,15 +206,54 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
                                             </div>
                                             <div className="grid grid-cols-4 items-center gap-2">
                                                 <Label htmlFor="status" className="text-left">Status</Label>
-                                            <select className="w-full p-2 border border-gray-300 rounded col-span-3" id="status" onChange={(e) => setTaskParams({...taskParams, status: e.target.value})}>
-                                                <option value="" disabled>Select an option</option>
-                                                <option value="To do">To do</option>
-                                                <option value="In progress">In progress</option>
-                                                <option value="In review">In review</option>
-                                                <option value="Completed">Completed</option>
-                                                <option value="Backlog">Backlog</option>
-                                            </select>
+                                                <select className="w-full p-2 border border-gray-300 rounded col-span-3" id="status" onChange={(e) => setTaskParams({...taskParams, status: e.target.value})}>
+                                                    <option value="" disabled>Select an option</option>
+                                                    <option value="To do">To do</option>
+                                                    <option value="In progress">In progress</option>
+                                                    <option value="In review">In review</option>
+                                                    <option value="Completed">Completed</option>
+                                                    <option value="Backlog">Backlog</option>
+                                                </select>
                                             </div>
+                                            <div className="grid grid-cols-4 items-center gap-2">
+                                                <Label htmlFor="assignee">Assignee:</Label>
+                                                <Input
+                                                    id="assignee"
+                                                    onChange={(e) => {
+                                                        handleUserSearch(e.target.value); // Trigger user search
+                                                    }}
+                                                    className="col-span-3"
+                                                />
+                                                {/* Don't remove this empty div, added for layout purposes */}
+                                                <div></div>
+                                                {/* Display filtered users */}
+                                                {users && users.length > 0 && (
+                                                <div className="flex flex-col justify-center col-span-3 bg-white w-1/3 mt-1 border border-gray-300 rounded shadow-md">
+                                                    {users.map((user) => (
+                                                        <div
+                                                            key={user._id}
+                                                            className={`p-2 cursor-pointer hover:bg-gray-100 ${
+                                                                selectedUser === user ? 'bg-gray-100' : ''
+                                                            } flex justify-between items-center`}
+                                                        >
+                                                            {user.name}
+                                                            <Button
+                                                                variant="default"
+                                                                className={`p-2 w-7 h-7 text-white bg-blue-500 hover:bg-blue-600 rounded-b ${
+                                                                    isUserAdded && selectedUser?._id === user._id
+                                                                    ? 'bg-green-500 hover:bg-green-600'
+                                                                    : 'bg-blue-500 hover:bg-blue-600'
+                                                                }`}
+                                                                onClick={() => handleUserSelection(user)}
+                                                                >
+                                                                {isUserAdded && selectedUser?._id === user._id ? <Check /> : <Plus />}
+                                                            </Button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                )}
+                                            </div>
+                                            
                                         </div>
 
                                         <DialogFooter>
