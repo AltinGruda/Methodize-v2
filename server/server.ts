@@ -4,10 +4,10 @@ import connectDB from "./config/database";
 import teamRoutes from './routes/teamRoutes';
 import authRoutes from './routes/authRoutes';
 import projectRoutes from './routes/projectRoutes';
+import roomRoutes from './routes/roomRoutes';
 import cors from 'cors';
 import { Server } from 'socket.io';
 import http from 'http';
-import { getTaskComments } from './controllers/projectController';
 
 const app = express();
 const server = http.createServer(app);
@@ -38,6 +38,7 @@ app.use(cors({
 app.use('/auth', authRoutes)
 app.use('/team', teamRoutes)
 app.use('/project', projectRoutes);
+app.use('/room', roomRoutes)
 
 app.use((error: Error, req:Request, res: Response) => {
   console.log(error);
@@ -90,6 +91,5 @@ io.on('connection', (socket) => {
     console.log("Disconnected", socket.id);
   });
 })
-
 
 server.listen(5000, () => console.log('Listening at port 5000'));

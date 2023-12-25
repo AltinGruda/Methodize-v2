@@ -1,4 +1,5 @@
 import { toast } from "@/components/ui/use-toast";
+import { FieldValues } from 'react-hook-form';
 
 export async function getUserTeams(userId: string | null) {
     try {
@@ -425,3 +426,40 @@ export const deleteTask = async (taskId: string) => {
       throw new Error('Error deleting task.');
   }
 };
+
+// create a meeting room to attend to
+export async function createRoom(roomName: FieldValues) {
+    try {
+        
+        const response = await fetch('https://gleaming-blue-spacesuit.cyclic.app/room/createRoom', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name: roomName,
+            })
+        });
+
+        if (response.ok) {
+            console.log('Room created, redirecting soon!');
+        }
+    } catch (error) {
+        console.error("Error creating room:", error);
+        // Handle error, show error message, etc.
+    }
+}
+
+// get all meeting rooms to show
+export async function getAllRooms() {
+    try {
+        const response = await fetch('https://gleaming-blue-spacesuit.cyclic.app/room/rooms');
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}

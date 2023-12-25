@@ -14,6 +14,8 @@ import { Project } from './pages/project'
 import { SocketProvider } from './context/SocketContext'
 import { Notes } from './components/notes'
 import { Dashboard } from './pages/dashboard'
+import Room from './pages/room'
+import Rooms from './pages/rooms'
 
 function App() {
   const {isAuth} = useAuth();
@@ -33,6 +35,8 @@ function App() {
                   <Route path='/noprojects' element={<NoProjects />} />
                   <Route path='/teams' element={<Teams />} />
                   <Route path='/team/:id' element={<Team />}  />
+                  <Route path='/room' element={<Room />} />
+                  <Route path='/room/all' element={<Rooms />} />
                 </Route>
                 <Route path='/login' element={<Authentication />} />
             </Routes>

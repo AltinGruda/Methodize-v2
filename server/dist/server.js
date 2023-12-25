@@ -9,6 +9,7 @@ const database_1 = __importDefault(require("./config/database"));
 const teamRoutes_1 = __importDefault(require("./routes/teamRoutes"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const projectRoutes_1 = __importDefault(require("./routes/projectRoutes"));
+const roomRoutes_1 = __importDefault(require("./routes/roomRoutes"));
 const cors_1 = __importDefault(require("cors"));
 const socket_io_1 = require("socket.io");
 const http_1 = __importDefault(require("http"));
@@ -35,6 +36,7 @@ app.use((0, cors_1.default)({
 app.use('/auth', authRoutes_1.default);
 app.use('/team', teamRoutes_1.default);
 app.use('/project', projectRoutes_1.default);
+app.use('/room', roomRoutes_1.default);
 app.use((error, req, res) => {
     console.log(error);
     const status = error.statusCode || 500;

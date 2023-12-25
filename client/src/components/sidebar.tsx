@@ -6,7 +6,7 @@ export function Sidebar() {
     const location = useLocation();
 
    return (
-    <div className="col-span-1 bg-[#121212]">
+    <div className="col-span-1 bg-[#121212] min-h-screen">
         <img src={Logo} alt="methodize logo" className='max-w-[70%] m-auto' />
         <div className='flex flex-col items-center'>
             <div className='flex flex-col items-start gap-y-6 gap-x-5 text-lg text-[#6C6C6C]'>   
@@ -28,7 +28,7 @@ export function Sidebar() {
                 </div>
                 <div className='flex gap-y-6 gap-x-5 hover:text-[#D2D2D2] hover:cursor-pointer'>
                     <Video />
-                    <span>Meeting</span>
+                    <Link to="room" className={`${location.pathname === '/room' ? 'text-white' : ''}`}>Meetings</Link>
                 </div>
                 <div className='flex gap-y-6 gap-x-5 hover:text-[#D2D2D2] hover:cursor-pointer'>
                     <MessagesSquare />
