@@ -80,7 +80,7 @@ export const Dashboard = () => {
                         </Card>
                         ))}
                     </div>
-                </div>;
+                </div>
             </div>
         </div>
     )
