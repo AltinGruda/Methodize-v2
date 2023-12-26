@@ -17,6 +17,7 @@ import { Dashboard } from './pages/dashboard'
 import Room from './pages/room'
 import Rooms from './pages/rooms'
 import { Charts } from './pages/charts'
+import { Whiteboard } from './pages/whiteboard'
 
 function App() {
   const {isAuth} = useAuth();
@@ -39,6 +40,7 @@ function App() {
                   <Route path='/room' element={<Room />} />
                   <Route path='/room/all' element={<Rooms />} />
                   <Route path='/charts' element={<Charts />} />
+                  <Route path='/whiteboard' element={<Whiteboard />} />
                 </Route>
                 <Route path='/login' element={<Authentication />} />
             </Routes>

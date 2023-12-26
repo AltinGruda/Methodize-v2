@@ -1,5 +1,5 @@
 import Logo from '@/assets/logo.png'
-import { LayoutDashboard, KanbanSquareDashed, ListTodo, Users2, Video, MessagesSquare, Settings, AreaChart } from 'lucide-react'
+import { LayoutDashboard, KanbanSquareDashed, ListTodo, Users2, Video, MessagesSquare, Settings, AreaChart, Brush } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 
 export function Sidebar() {
@@ -33,6 +33,10 @@ export function Sidebar() {
                 <div className='flex gap-y-6 gap-x-5 hover:text-[#D2D2D2] hover:cursor-pointer'>
                     <Video className={`${location.pathname === '/room' ? 'text-white' : ''}`} />
                     <Link to="room" className={`${location.pathname === '/room' ? 'text-white' : ''}`}>Meetings</Link>
+                </div>
+                <div className='flex gap-y-6 gap-x-5 hover:text-[#D2D2D2] hover:cursor-pointer'>
+                    <Brush className={`${location.pathname === '/whiteboard' ? 'text-white' : ''}`} />
+                    <Link to="whiteboard" className={`${location.pathname === '/whiteboard' ? 'text-white' : ''}`}>Whiteboard</Link>
                 </div>
                 <div className='flex gap-y-6 gap-x-5 hover:text-[#D2D2D2] hover:cursor-pointer'>
                     <MessagesSquare />
