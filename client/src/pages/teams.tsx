@@ -30,7 +30,7 @@ export const Teams = () => {
         };
         
         fetchData();
-    }, []); // Add user as a dependency if it's used in getUserTeams
+    }, [userId]); // Add user as a dependency if it's used in getUserTeams
     console.log(teams);
     return (
         <div className="m-10 flex flex-col col-span-4 gap-y-5">

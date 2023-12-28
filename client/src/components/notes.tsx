@@ -89,7 +89,7 @@ export const Notes = () => {
   };
 
   return (
-    <div className="fixed bottom-8 right-8">
+    <div className="fixed bottom-8 right-8 z-30">
         <button
             className={`bg-yellow-400 rounded-full w-12 h-12 p-2 flex items-center justify-center shadow-lg ${isOpen ? 'scale-up-br' : ''} ${isClosing ? 'scale-out-right' : ''}`}
             onClick={handleToggle}

@@ -25,7 +25,7 @@ router.get('/tasks/:userId', getAllTasks);
 router.get('/tasks/:projectId/:sprintId', getProjectTasks);
 
 // Get all tasks of a specific project
-router.get('/tasks/:projectId', getTasks);
+router.get('/:projectId/tasks', getTasks);
 
 // Create a task inside a project
 router.post('/create-task', createTask);

@@ -35,7 +35,7 @@ export function Backlog() {
       // Separate tasks into active and archived
       const activeTasks = tasks.filter((task: Task) => task.status !== "Archived");
       const archivedTasks = tasks.filter((task: Task) => task.status === "Archived");
-
+      console.log("Active tasks: ",activeTasks)
       setTasks(activeTasks);
       setArchivedTasks(archivedTasks);
       setSprintState(!!sprint)
@@ -66,7 +66,22 @@ export function Backlog() {
       <div className="m-10 flex flex-col gap-5 col-span-4">
 
           <div className="flex justify-between items-center">
-              <Breadcrumb />
+            <nav className="w-full rounded-md">
+                <ol className="list-reset flex">
+                    <li>
+                        <a
+                            href="/"
+                            className="text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
+                        >Dashboard</a>
+                    </li>
+                    <li>
+                        <span className="mx-2 text-neutral-500 dark:text-neutral-400 hover:cursor-pointer">/</span>
+                    </li>
+                    <li className="text-neutral-500 dark:text-neutral-400">
+                        <a href={`${location.pathname}`}>backlog</a>
+                    </li>
+                </ol>
+              </nav>
               <UserNav />
           </div>
 

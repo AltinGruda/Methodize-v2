@@ -164,12 +164,14 @@ const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { projectId } = req.params;
         // Check if the project exists
-        const project = yield Project_1.default.findById(projectId);
+        const project = yield Project_1.default.find({ _id: projectId });
         if (!project) {
             return res.status(404).json('Project not found.');
         }
+        console.log(project);
         // Retrieve tasks based on projectId and optional sprintId
-        const tasks = yield Task_1.default.find({ projectId });
+        const tasks = yield Task_1.default.find({ projectId: projectId });
+        console.log(tasks);
         return res.json(tasks);
     }
     catch (error) {

@@ -21,7 +21,7 @@ router.get('/tasks/:userId', projectController_1.getAllTasks);
 // Get all tasks of a specific project sprint
 router.get('/tasks/:projectId/:sprintId', projectController_1.getProjectTasks);
 // Get all tasks of a specific project
-router.get('/tasks/:projectId', projectController_1.getTasks);
+router.get('/:projectId/tasks', projectController_1.getTasks);
 // Create a task inside a project
 router.post('/create-task', projectController_1.createTask);
 // Delete a task of a project

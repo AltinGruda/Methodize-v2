@@ -2,7 +2,7 @@ import { Breadcrumb } from "@/components/breadcrumb";
 import { UserNav } from "@/components/user-nav";
 import { useEffect, useState } from "react";
 import { TeamInterface } from "./teams";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -24,6 +24,7 @@ export const Team = () => {
     const { toast } = useToast();
     const { user: owner } = useAuth();
     const { socket } = useSocket();
+    const navigate = useNavigate();
 
     const [projectNameInput, setProjectNameInput] = useState('');
     const [projects, setProjects] = useState([]);
@@ -94,8 +95,23 @@ export const Team = () => {
     return (
         <div className="m-10 flex flex-col gap-5 col-span-4">
             <div className="flex justify-between items-center">
-                <Breadcrumb />
-                <UserNav />
+              <nav className="w-full rounded-md">
+                <ol className="list-reset flex">
+                    <li>
+                        <a
+                            href="/"
+                            className="text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
+                        >Dashboard</a>
+                    </li>
+                    <li>
+                        <span className="mx-2 text-neutral-500 dark:text-neutral-400 hover:cursor-pointer" onClick={() => navigate('/teams')}>/ teams /</span>
+                    </li>
+                    <li className="text-neutral-500 dark:text-neutral-400">
+                        <a href={`${location.pathname}`}>team</a>
+                    </li>
+                </ol>
+              </nav>
+              <UserNav />
             </div>
             <div className="flex justify-between">
               {/* Add member to the team */}

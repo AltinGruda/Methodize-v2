@@ -193,7 +193,7 @@ export const createTask = async (name: string, date: string, status: string, pro
 export const getTasks = async (projectId: string | undefined) => {
     try {  
       // Make the API request using fetch directly
-      const response = await fetch(`http://localhost:5000/project/tasks/${projectId}`);
+      const response = await fetch(`http://localhost:5000/project/${projectId}/tasks`);
   
       // Check if the response is successful
       if (!response.ok) {

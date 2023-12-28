@@ -169,13 +169,14 @@ export const getTasks = async (req: Request, res: Response) => {
         const { projectId } = req.params;
 
         // Check if the project exists
-        const project = await Project.findById(projectId);
+        const project = await Project.find({ _id: projectId });
         if (!project) {
             return res.status(404).json('Project not found.');
         }
-
-          // Retrieve tasks based on projectId and optional sprintId
-          const tasks = await Task.find({ projectId });
+        
+        // Retrieve tasks based on projectId and optional sprintId
+        const tasks = await Task.find({ projectId: projectId });
+        console.log(tasks);
 
         return res.json(tasks);
     } catch (error) {
