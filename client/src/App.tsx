@@ -1,7 +1,6 @@
 import './App.css'
 import { Sidebar } from './components/sidebar'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Projects } from './pages/projects'
 import { Kanban } from './pages/kanban'
 import { NoProjects } from './components/no-projects'
 import { Teams } from './pages/teams'
@@ -31,7 +30,6 @@ function App() {
             <Routes>
                 <Route element={<PrivateRoutes />}>
                   <Route path='/' element={<Dashboard />} />
-                  <Route path='/projects' element={<Projects />} />
                   <Route path='/project/:id' element={<Project />} />
                   <Route path='/backlog/:id' element={<Backlog />} />
                   <Route path='/kanban/:id' element={<Kanban />} />

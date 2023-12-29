@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { DragDropContext } from 'react-beautiful-dnd';
 import { Task } from "@/models/Task";
 import { Project } from "@/models/Project";
+import { Info } from "lucide-react";
 // import { Sprint } from "@/models/Sprint";
 
 export function Kanban() {
@@ -104,6 +105,15 @@ export function Kanban() {
         }
     }
 
+    if(activeSprint.length === 0) {
+        return (
+            <div className="w-full flex justify-center items-center col-span-4 gap-x-2">
+                <Info className="text-[#434447]" />
+                <p className="text-lg font-semibold text-[#434447] ">No sprint is active for this project. Head to <a href={`/backlog/${param.id}`} className="text-blue-500">backlog</a> and start a sprint.</p>
+            </div>
+        )
+    }
+console.log("Active sprint", activeSprint)
     return (
         <div className="m-10 flex flex-col gap-5 col-span-4">
             <div className="flex justify-between items-center">

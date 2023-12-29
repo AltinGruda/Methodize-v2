@@ -4,6 +4,7 @@ import { UserNav } from "@/components/user-nav";
 import { useAuth } from "@/context/useAuth";
 import { Task } from "@/models/Task";
 import 'chart.js/auto'
+import { Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Pie, Bar } from 'react-chartjs-2'
 
@@ -94,6 +95,12 @@ export function Charts() {
                     <UserNav />
                 </div>
                 <div className="grid grid-cols-2 gap-8">
+                    {tasks.length === 0 && 
+                        <div className="col-span-2 flex justify-center items-center gap-x-2">
+                                <Info className="text-[#434447]" />
+                                <p className="w-fit text-lg font-semibold text-[#434447] text-center">You have no tasks yet.</p>
+                        </div>
+                    }
                     <div className="bg-gray-100 p-6 rounded-md">
                         <Pie
                             data={data}

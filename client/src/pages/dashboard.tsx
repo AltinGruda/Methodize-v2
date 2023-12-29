@@ -1,5 +1,6 @@
 import { getProjectsByTeams, getUserTasks } from "@/api/apiCalls";
 import { Breadcrumb } from "@/components/breadcrumb";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Card, CardHeader } from "@/components/ui/card";
 import { UserNav } from "@/components/user-nav";
 import { useAuth } from "@/context/useAuth"
@@ -55,30 +56,54 @@ export const Dashboard = () => {
                         </div>
                     </div>
                 ))}
+                {tasks?.length === 0 && 
+                    <p className="font-normal">You have no assigned tasks.</p>
+                }
                 </div>
                 <div className="flex flex-col items-center text-lg font-semibold">
                     <h3 className="text-2xl mb-4 text-indigo-600">Your Projects</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {projects?.map((project) => (
-                        <Card
-                            key={project._id}
-                            className="m-4 p-6 flex flex-col justify-between items-center bg-gradient-to-br from-purple-400 to-indigo-600 hover:scale-105 hover:shadow-2xl transition w-full gap-y-3 animate-in fade-in slide-in-from-top duration-300 rounded-lg"
-                            onClick={() => navigate(`/project/${project._id}`)}
-                        >
-                            <CardHeader className="flex items-center">
-                            <Avatar
-                                size={40}
-                                name={project.name}
-                                variant="marble"
-                                colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
-                            />
-                            <div className="ml-4">
-                                <p className="font-bold text-white">{project.name}</p>
-                                <span className="text-[#F9FAFB] font-semibold">{project.tasks.length} tasks</span>
-                            </div>
-                            </CardHeader>
-                        </Card>
+                            <>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild className="w-full">
+                                    {/* project cards */}
+                                    <Card
+                                        key={project._id}
+                                        className="m-4 p-6 flex flex-col justify-between items-center bg-gradient-to-br from-purple-400 to-indigo-600 hover:scale-105 hover:shadow-2xl transition w-full gap-y-3 animate-in fade-in slide-in-from-top duration-300 rounded-lg"
+                                    >
+                                        <CardHeader className="flex items-center">
+                                        <Avatar
+                                            size={40}
+                                            name={project.name}
+                                            variant="marble"
+                                            colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
+                                        />
+                                        <div className="ml-4">
+                                            <p className="font-bold text-white">{project.name}</p>
+                                            <span className="text-[#F9FAFB] font-semibold">{project.tasks.length} tasks</span>
+                                        </div>
+                                        </CardHeader>
+                                    </Card>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Where do you want to go?</AlertDialogTitle>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogAction  onClick={() => navigate(`/backlog/${project._id}`) }>Backlog</AlertDialogAction>
+                                        <AlertDialogAction  onClick={() => navigate(`/kanban/${project._id}`)}>Kanban</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                            </>
                         ))}
+                        {projects?.length === 0 && (
+                                <>
+                                    <p className="col-span-3 font-normal text-sm">You have no projects. You have to create a <a href="/teams" className="text-blue-500">team</a> first.</p>
+                                </>
+                            )
+                        }
                     </div>
                 </div>
             </div>

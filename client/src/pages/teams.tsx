@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserNav } from "@/components/user-nav";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getUserTeams } from "@/api/apiCalls";
 import { useAuth } from "@/context/useAuth";
+
+
 
 export interface TeamInterface {
     _id: string;
@@ -31,7 +33,7 @@ export const Teams = () => {
         
         fetchData();
     }, [userId]); // Add user as a dependency if it's used in getUserTeams
-    console.log(teams);
+    console.log(teams)
     return (
         <div className="m-10 flex flex-col col-span-4 gap-y-5">
             <div className="flex justify-between items-center">
@@ -41,8 +43,7 @@ export const Teams = () => {
             <div className="flex justify-between">
                 <div className="flex gap-x-4 w-[50%] items-center">
                         <h2 className="text-3xl font-semibold">Teams</h2>
-                        <span className="text-[#848D9C]"> · 5</span>
-                        <Input type="search" placeholder="Search teams..." className="w-[50%] bg-[#E2E3E5]" />
+                        <span className="text-[#848D9C]"> · {teams.length}</span>
                 </div>
                 <div>
                     <span className="text-[#848D9C]">Sort by:</span>
@@ -78,6 +79,20 @@ export const Teams = () => {
                     team._id && <Team key={team._id} team={team} />
                 ))}
             </div>
+            {teams.length === 0 &&
+                <>
+                    <div>
+                        <div className="starsec"></div>
+                        <div className="starthird"></div>
+                        <div className="starfourth"></div>
+                        <div className="starfifth"></div>
+                    </div>
+                    <div className="flex gap-2 m-20 justify-center items-start">
+                        <Info className="text-[#434447]" />
+                        <p className="w-[50%] text-lg font-semibold text-[#434447] text-center">You have no teams. Click Add Team to create one or ask for an invite from your project manager.</p>
+                    </div>
+                </>
+            }
         </div>
     )
 }
