@@ -3,7 +3,7 @@ import { KanbanCards } from "@/components/kanban-cards";
 import { UserNav } from "@/components/user-nav";
 import { useAuth } from "@/context/useAuth";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { DragDropContext } from 'react-beautiful-dnd';
 import { Task } from "@/models/Task";
 import { Project } from "@/models/Project";
@@ -15,6 +15,7 @@ export function Kanban() {
     const param = useParams();
     const [activeSprint, setActiveSprint] = useState<Task[]>([]);
     const [project, setProject] = useState<Project>();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getActiveSprintTasks = async () => {
@@ -113,7 +114,6 @@ export function Kanban() {
             </div>
         )
     }
-console.log("Active sprint", activeSprint)
     return (
         <div className="m-10 flex flex-col gap-5 col-span-4">
             <div className="flex justify-between items-center">
@@ -137,10 +137,11 @@ console.log("Active sprint", activeSprint)
                 </div>
                 <UserNav />
             </div>
+
             <div>
                 <h2 className="text-2xl">{project?.name}</h2>
-                <div className="flex justify-end">
-                    <div className="mb-4">
+                <div className="flex justify-between">
+                    <div className="mb-4 mt-4">
                         <label htmlFor="filter" className="font-bold mr-2">
                             Filter By:
                         </label>
@@ -152,6 +153,19 @@ console.log("Active sprint", activeSprint)
                             <option value="">All</option>
                             <option value={`${user?._id}`}>My Tasks</option>
                         </select>
+                    </div>
+                    {/* Backlog button */}
+                    <div className="flex h-fit">
+                        <a onClick={() => navigate(`/backlog/${param.id}`)} className="relative inline-flex items-center justify-start py-3 pl-4 pr-12 overflow-hidden font-semibold text-indigo-600 transition-all duration-150 ease-in-out rounded hover:pl-10 hover:pr-6 bg-gray-50 group hover:cursor-pointer">
+                        <span className="absolute bottom-0 left-0 w-full h-1 transition-all duration-150 ease-in-out bg-indigo-600 group-hover:h-full"></span>
+                        <span className="absolute right-0 pr-4 duration-200 ease-out group-hover:translate-x-12">
+                        <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </span>
+                        <span className="absolute left-0 pl-2.5 -translate-x-12 group-hover:translate-x-0 ease-out duration-200">
+                        <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </span>
+                        <span className="relative w-full text-left transition-colors duration-200 ease-in-out group-hover:text-white">Backlog</span>
+                        </a>
                     </div>
                 </div>
             </div>            

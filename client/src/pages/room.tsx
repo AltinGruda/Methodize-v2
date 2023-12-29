@@ -19,6 +19,7 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { Link } from 'react-router-dom'
+import { Info } from "lucide-react";
 
 export default function Room() {
     const [roomName, setRoomName] = useState<FieldValues>();
@@ -45,6 +46,10 @@ export default function Room() {
                                         <CardDescription>
                                             Provide the name of the room and click Create
                                         </CardDescription>
+                                        <div className="flex items-center gap-x-1">
+                                            <Info />
+                                            <p className="w-fit text-xs text-center">The room name should be one worded.</p>
+                                        </div>
                                     </CardHeader>
                                     <CardContent className="space-y-2">
                                         <form className="space-y-2" onSubmit={handleSubmit((data: FieldValues) => {
