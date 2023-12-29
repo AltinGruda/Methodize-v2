@@ -21,7 +21,7 @@ export default function Authentication() {
 
         // Call the login function with the temporary object
         await login(loginData);
-        navigate('/projects')
+        navigate('/')
     };
 
     return (

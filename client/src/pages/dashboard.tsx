@@ -18,7 +18,7 @@ export const Dashboard = () => {
     useEffect(() => {
         async function fetchData() {
             const tasksResponse = await getUserTasks(user?._id)
-            const taskData = tasksResponse.filter((task:Task) => task.status !== 'Archived');
+            const taskData = tasksResponse.filter((task:Task) => task.status !== 'Archived' && task.status !== 'Completed');
             const projectsResponse = await getProjectsByTeams(user?.teams); 
 
             setTasks(taskData);

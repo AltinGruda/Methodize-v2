@@ -18,14 +18,15 @@ import Room from './pages/room'
 import Rooms from './pages/rooms'
 import { Charts } from './pages/charts'
 import { Whiteboard } from './pages/whiteboard'
+import { LandingPage } from './pages/landing-page'
 
 function App() {
   const {isAuth} = useAuth();
   return (
     <div className='grid grid-cols-5 bg-[#D9DADE] min-h-screen'>
       <BrowserRouter>
-          {isAuth && <Sidebar />}
-          <Notes />
+          {isAuth && <Sidebar /> }
+          {isAuth && <Notes />}
           <SocketProvider>
             <Routes>
                 <Route element={<PrivateRoutes />}>
@@ -42,6 +43,7 @@ function App() {
                   <Route path='/charts' element={<Charts />} />
                   <Route path='/whiteboard' element={<Whiteboard />} />
                 </Route>
+                <Route path='/home' element={<LandingPage />} />
                 <Route path='/login' element={<Authentication />} />
             </Routes>
           </SocketProvider>

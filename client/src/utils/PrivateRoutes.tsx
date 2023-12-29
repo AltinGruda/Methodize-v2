@@ -34,7 +34,7 @@ const PrivateRoutes = () => {
     return <div>Loading...</div>;
   }
 
-  return isAuth ? <Outlet /> : <Navigate to="/login" />;
+  return isAuth ? <Outlet /> : <Navigate to="/home" />;
 };
 
 export default PrivateRoutes;

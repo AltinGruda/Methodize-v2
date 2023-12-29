@@ -127,7 +127,7 @@ export async function getProjectsByTeams(teamIds: string[] | undefined) {
   }
 }
 
-export async function getProjectById(projectId: string) {
+export async function getProjectById(projectId?: string) {
     try {
         const response = await fetch(`http://localhost:5000/project/byId/${projectId}`);
         

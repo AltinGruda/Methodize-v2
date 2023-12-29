@@ -1,5 +1,4 @@
-import { checkActiveSprint, createTask, finishSprint, getTasks, startSprint, updateTask } from "@/api/apiCalls";
-import { Breadcrumb } from "@/components/breadcrumb";
+import { checkActiveSprint, createTask, finishSprint, getProjectById, getTasks, startSprint, updateTask } from "@/api/apiCalls";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -8,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { UserNav } from "@/components/user-nav";
+import { Project } from "@/models/Project";
 import { Sprint } from "@/models/Sprint";
 import { Task } from "@/models/Task";
 import { CheckCircle2, ChevronsUpDown, Circle, HelpCircle, MoreVertical, ScanEye, Timer } from "lucide-react";
@@ -26,6 +26,7 @@ export function Backlog() {
   const [sprint, setSprint] = useState<Sprint>();
   const [changeStatus, setChangeStatus] = useState('');
   const [archivedTasks, setArchivedTasks] = useState([]);
+  const [project, setProject] = useState<Project>();
 
   const getAllTasks = async () => {
     try {
@@ -35,7 +36,9 @@ export function Backlog() {
       // Separate tasks into active and archived
       const activeTasks = tasks.filter((task: Task) => task.status !== "Archived");
       const archivedTasks = tasks.filter((task: Task) => task.status === "Archived");
-      console.log("Active tasks: ",activeTasks)
+      const project = await getProjectById(param.id);
+
+      setProject(project);
       setTasks(activeTasks);
       setArchivedTasks(archivedTasks);
       setSprintState(!!sprint)
@@ -84,7 +87,7 @@ export function Backlog() {
               </nav>
               <UserNav />
           </div>
-
+          <h3 className="text-xl font-semibold">{project?.name}</h3>
           <Label htmlFor="search">Search Tasks</Label>
           <Input id="search" type="search" className="h-8 w-[150px] lg:w-[250px]" placeholder="Search tasks..." onChange={(e) => setSearch(e.target.value)} />
           <div className="flex justify-between">

@@ -305,9 +305,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
                 <span className="text-gray-400">65</span>
                 <div className="w-full flex justify-end gap-3 items-center">
                     <Button variant="ghost" className="bg-[#EDEBFE] rounded-full w-fit h-fit gap-2 text-[#5521B5] hover:text-[#5521B5]"><Clock className="w-5 h-5" />{dateDaysLeft(task.due_date)} days left</Button>
-                    <Avatar>
-                        <AvatarFallback>AG</AvatarFallback>
-                    </Avatar>
                 </div>
             </CardContent>
         </div>

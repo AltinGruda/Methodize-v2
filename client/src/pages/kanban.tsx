@@ -1,26 +1,28 @@
-import { activeSprintTasks, checkActiveSprint, deleteTask, updateStatus } from "@/api/apiCalls";
-import { Breadcrumb } from "@/components/breadcrumb";
+import { activeSprintTasks, checkActiveSprint, deleteTask, getProjectById, updateStatus } from "@/api/apiCalls";
 import { KanbanCards } from "@/components/kanban-cards";
 import { UserNav } from "@/components/user-nav";
 import { useAuth } from "@/context/useAuth";
-import Avatar from "boring-avatars";
-import { Plus } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { DragDropContext } from 'react-beautiful-dnd';
 import { Task } from "@/models/Task";
+import { Project } from "@/models/Project";
 // import { Sprint } from "@/models/Sprint";
 
 export function Kanban() {
     const {user} = useAuth();
     const param = useParams();
     const [activeSprint, setActiveSprint] = useState<Task[]>([]);
+    const [project, setProject] = useState<Project>();
 
     useEffect(() => {
         const getActiveSprintTasks = async () => {
             try {
                 const sprint = await checkActiveSprint(param.id);
                 const sprintTasks = await activeSprintTasks(sprint.projectId, sprint._id);
+
+                const project = await getProjectById(param.id);
+                setProject(project);
                 setActiveSprint(sprintTasks);
             } catch (error) {
                 console.log(error);
@@ -126,7 +128,7 @@ export function Kanban() {
                 <UserNav />
             </div>
             <div>
-                <h2 className="text-2xl">Project Tsukinome</h2>
+                <h2 className="text-2xl">{project?.name}</h2>
                 <div className="flex justify-end">
                     <div className="mb-4">
                         <label htmlFor="filter" className="font-bold mr-2">
