@@ -67,6 +67,7 @@ const getUser = (username: any) => {
 
 io.on('connection', (socket) => {
   socket.on('newUser', (user) => {
+    console.log("Socket user: ", user);
     addNewUser(user.name, socket.id);
     console.log(onlineUsers)
   });

@@ -6,9 +6,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FieldValues, useForm } from "react-hook-form";
 import { useAuth } from "@/context/useAuth";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Authentication() {
-    const { login } = useAuth();
+    const { login, signup } = useAuth();
     const { register, handleSubmit } = useForm<FieldValues>();
     const navigate = useNavigate();
 
@@ -21,8 +22,30 @@ export default function Authentication() {
 
         // Call the login function with the temporary object
         await login(loginData);
-        navigate('/')
+        navigate('/');
     };
+
+    const handleSignUp = async (data: FieldValues) => {
+        try {
+            const signupData: { email: string; name: string; password: string } = {
+                email: data.email as string,
+                name: data.name as string,
+                password: data.password as string,
+            };
+    
+            await signup(signupData);
+            toast({
+                title: "You have been registered!",
+                description: "You can now log in."
+            })
+        } catch (error) {
+            console.error(error);
+            toast({
+                title: "Something went wrong!",
+                variant: "destructive"
+            })
+        }
+    }
 
     return (
         <div className="w-full h-full flex items-center justify-center col-span-5">
@@ -59,7 +82,7 @@ export default function Authentication() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-2">
-                            {/* <form className="space-y-2" onSubmit={handleSubmit((data: FieldValues) => RegisterUser(data))}>
+                            <form className="space-y-2" onSubmit={handleSubmit(handleSignUp)}>
                                 <Label htmlFor="name">Name</Label>
                                 <Input id="name" type="text" {...register('name')} />
                                 <Label htmlFor="email">Email</Label>
@@ -67,7 +90,7 @@ export default function Authentication() {
                                 <Label htmlFor="password">Password</Label>
                                 <Input id="password" type="password" {...register('password')} />
                                 <Button type="submit">Register</Button>
-                            </form> */}
+                            </form>
                         </CardContent>
                     </Card>
                 </TabsContent>

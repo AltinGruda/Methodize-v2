@@ -14,6 +14,12 @@ export interface UserData {
   password: string;
 }
 
+export interface UserSignupData {
+  email: string;
+  name: string;
+  password: string;
+}
+
 // Define the types for the authentication context
 export interface AuthContextProps {
   isAuth: boolean;
@@ -23,6 +29,7 @@ export interface AuthContextProps {
   user: User | null;
   login: (userData: UserData) => void;
   logout: () => void;
+  signup: (userData: UserSignupData) => void;
 }
 
 interface AuthState {
@@ -146,11 +153,51 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  const signup = async (userData: UserSignupData) => {
+    try {
+      const response = await fetch('http://localhost:5000/auth/signup', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: userData.email,
+          password: userData.password,
+          name: userData.name
+        })
+      });
+  
+      if (response.status === 422) {
+        throw new Error('Validation failed.');
+      }
+  
+      if (response.status !== 200 && response.status !== 201) {
+        console.log('Error!');
+        throw new Error('Could not register the user!');
+      }
+  
+      const resData = await response.json();
+      console.log("Response data: ", resData)
+    } catch (err) {
+      console.log(err);
+  
+      setAuthState({
+        isAuth: false,
+        token: null,
+        userId: null,
+        user: null,
+        error: err as Error,
+      });
+    }
+  };
+  
+
   // Create a value object to be provided to consumers of the context
   const contextValue = {
     ...authState,
     login,
     logout,
+    signup
   };
 
 
