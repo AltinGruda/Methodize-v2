@@ -14,6 +14,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from "@/context/useAuth";
 import { ProjectCards } from "@/components/project-cards";
 import { useSocket } from "@/context/useSocket";
+import { Info } from "lucide-react";
 
 
 export const Team = () => {
@@ -219,7 +220,10 @@ export const Team = () => {
                   {projects.length > 0 ? (
                     <ProjectCards projects={projects} />
                   ) : (
-                    <p>No projects</p>
+                    <div className="flex gap-2 m-20 justify-center items-center col-span-4">
+                        <Info className="text-[#434447]" />
+                        <p className="w-[50%] text-lg font-semibold text-[#434447] text-center">You have no projects. Click Add Project to create one.</p>
+                    </div>
                   )}
                 </div>
             </div>

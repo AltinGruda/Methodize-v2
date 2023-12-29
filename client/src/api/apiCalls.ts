@@ -429,8 +429,7 @@ export const deleteTask = async (taskId: string) => {
 
 // create a meeting room to attend to
 export async function createRoom(roomName: FieldValues) {
-    try {
-        
+    try { 
         const response = await fetch('https://gleaming-blue-spacesuit.cyclic.app/room/createRoom', {
             method: "POST",
             headers: {
@@ -462,4 +461,32 @@ export async function getAllRooms() {
         console.error('Error fetching data:', error);
         throw error;
     }
+}
+
+// create a team
+export async function createTeam(teamName: string, userId: string | null) {
+  try {
+    await fetch('http://localhost:5000/team/create', {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+              name: teamName,
+              owner: userId
+      })
+    });
+
+    toast({
+      title: "Team created successfully."
+    })
+  } catch (error) {
+    console.log(error);
+    toast({
+      title: "Team couldn't be created.",
+      description: "Please try again.",
+      variant: "destructive"
+    })
+    throw error;
+  }
 }

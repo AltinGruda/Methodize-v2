@@ -6,8 +6,10 @@ import { UserNav } from "@/components/user-nav";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ArrowDownIcon, ArrowUpDown, ArrowUpIcon, Info } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getUserTeams } from "@/api/apiCalls";
+import { createTeam, getUserTeams } from "@/api/apiCalls";
 import { useAuth } from "@/context/useAuth";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 
 
@@ -18,8 +20,10 @@ export interface TeamInterface {
     members: [];
 }
 export const Teams = () => {
-    const {userId} = useAuth();
+    const { userId } = useAuth();
     const [teams, setTeams] = useState<TeamInterface[]>([]);
+
+    const [teamName, setTeamName] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -33,7 +37,6 @@ export const Teams = () => {
         
         fetchData();
     }, [userId]); // Add user as a dependency if it's used in getUserTeams
-    console.log(teams)
     return (
         <div className="m-10 flex flex-col col-span-4 gap-y-5">
             <div className="flex justify-between items-center">
@@ -69,9 +72,35 @@ export const Teams = () => {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button variant="default">
-                        Add Team
-                    </Button>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant="default">
+                                Add Team
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                            <DialogTitle>Create a new team</DialogTitle>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                                <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="name" className="text-right">Name</Label>
+                                    <Input id="name" className="col-span-3" onChange={(e) => setTeamName(e.target.value)} />
+                                </div>
+                            </div>
+                            <DialogFooter>
+                                <Button
+                                type="submit"
+                                onClick={async () => {
+                                    await createTeam(teamName, userId);
+                                    setTeams(await getUserTeams(userId));
+                                }}
+                                >
+                                Create
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </div>
             <div className="flex gap-x-5">
