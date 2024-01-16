@@ -3,7 +3,6 @@ import HeroHome from '@/components/landing-page/HeroHome';
 import FeaturesHome from '@/components/landing-page/Features';
 import FeaturesBlocks from '@/components/landing-page/FeaturesBlocks';
 import Testimonials from '@/components/landing-page/Testimonials';
-import Newsletter from '@/components/landing-page/Newsletter';
 import Footer from '@/components/landing-page/Footer';
 import 'aos/dist/aos.css';
 import '../css/style.css';
