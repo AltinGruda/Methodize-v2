@@ -21,13 +21,13 @@ export const Dashboard = () => {
             const tasksResponse = await getUserTasks(user?._id)
             const taskData = tasksResponse.filter((task:Task) => task.status !== 'Archived' && task.status !== 'Completed');
             const projectsResponse = await getProjectsByTeams(user?.teams); 
-
             setTasks(taskData);
             setProjects(projectsResponse);
         }
 
         fetchData();
     }, [user])
+
 
     return (
         <div className="m-10 flex flex-col gap-5 col-span-4">
@@ -64,7 +64,7 @@ export const Dashboard = () => {
                     <h3 className="text-2xl mb-4 text-indigo-600">Your Projects</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {projects?.map((project) => (
-                            <>
+                            <div key={project._id}>
                             <AlertDialog>
                                 <AlertDialogTrigger asChild className="w-full">
                                     {/* project cards */}
@@ -96,7 +96,7 @@ export const Dashboard = () => {
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
-                            </>
+                            </div>
                         ))}
                         {projects?.length === 0 && (
                                 <>

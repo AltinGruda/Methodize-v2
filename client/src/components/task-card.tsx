@@ -9,8 +9,8 @@ import { AvatarFallback, Avatar } from "./ui/avatar"
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
 import { Textarea } from "./ui/textarea"
-import { useState } from "react"
-import { activeSprintTasks, checkActiveSprint, getAllUsers, updateTask } from "@/api/apiCalls"
+import { useEffect, useState } from "react"
+import { activeSprintTasks, checkActiveSprint, getAllUsers, getUserById, updateTask } from "@/api/apiCalls"
 import { useParams } from "react-router-dom"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet"
 import { Separator } from "./ui/separator"
@@ -30,6 +30,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
     const [allUsers, setAllUsers] = useState<User[]>();
     const [users, setUsers] = useState<User[]>(); // Add this state for users
     const [selectedUser, setSelectedUser] = useState<User | null>();
+    const [assignee, setAssignee] = useState();
 
     const [isUserAdded, setIsUserAdded] = useState(false);
 
@@ -73,7 +74,16 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
           setIsUserAdded(!isUserAdded);
     };
 
+    useEffect(() => {
+        async function getAssignee() {
+            const response = await getUserById(task.assigneeId);
+            console.log("Fetch user: ", response);
+            setAssignee(response);
+        }
+        getAssignee();
+    }, [task.assigneeId])
 
+    console.log(assignee)
     return (
         <div className="p-2 m-2 flex flex-col bg-[#EDEDED] rounded-md items-start space-y-3">
             <div className="flex justify-between items-start w-full">
@@ -139,13 +149,14 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
                                                     </div>
                                                 </div>
 
-                                                <div className="p-4 bg-white border border-gray-300 rounded-lg shadow">
-                                                    <h2 className="text-xl font-bold text-gray-800 mb-2">Assigned To</h2>
-                                                    <div className="flex items-center">
-                                                        <img src="https://source.unsplash.com/random" alt="Avatar" className="w-8 h-8 rounded-full" />
-                                                        <span className="ml-2 text-gray-800 font-bold">John Doe</span>
+                                                {assignee && <>
+                                                    <div className="p-4 bg-white border border-gray-300 rounded-lg shadow">
+                                                        <h2 className="text-xl font-bold text-gray-800 mb-2">Assigned To</h2>
+                                                        <div className="flex items-center">
+                                                            <span className="ml-2 text-gray-800 font-bold">{assignee[0].name}</span>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </>}
 
                                                 <div className="p-4 bg-white border border-gray-300 rounded-lg shadow">
                                                     <h2 className="text-xl font-bold text-gray-800 mb-2">Status</h2>
@@ -302,7 +313,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({task, onDeleteTask, setActive
 
             <CardContent className="flex items-center justify-start w-full p-0">
                 <MessageCircle className="text-gray-400 transform -scale-100 rotate-90" />
-                <span className="text-gray-400">65</span>
+                <span className="text-gray-400"></span>
                 <div className="w-full flex justify-end gap-3 items-center">
                     <Button variant="ghost" className="bg-[#EDEBFE] rounded-full w-fit h-fit gap-2 text-[#5521B5] hover:text-[#5521B5]"><Clock className="w-5 h-5" />{dateDaysLeft(task.due_date)} days left</Button>
                 </div>
