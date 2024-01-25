@@ -15,7 +15,7 @@ export const Dashboard = () => {
     const [tasks, setTasks] = useState<Task[]>();
     const [projects, setProjects] = useState<Project[]>();
     const navigate = useNavigate();
-
+    console.log(user?.teams)
     useEffect(() => {
         async function fetchData() {
             const tasksResponse = await getUserTasks(user?._id)

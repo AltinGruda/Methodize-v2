@@ -124,7 +124,7 @@ export const LeaderDashboard = () => {
                             </div>
                             <div className="flex">
                                 {team.members.map((member, memberIndex) => (
-                                <Dialog>
+                                <Dialog key={memberIndex}>
                                     <DialogTrigger asChild>
                                         <Card
                                             key={memberIndex}
