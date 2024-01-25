@@ -31,4 +31,5 @@ router.put('/signup', [
 router.post('/login', authController.login);
 router.get('/users', authController.allUsers);
 router.get('/user/:id', authController.getUserById);
+router.get('/user-by-name/:name', authController.getUserByName);
 exports.default = router;

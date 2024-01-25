@@ -18,6 +18,7 @@ import Rooms from './pages/rooms'
 import { Charts } from './pages/charts'
 import { Whiteboard } from './pages/whiteboard'
 import { LandingPage } from './pages/landing-page'
+import { LeaderDashboard } from './pages/leader-dashboard'
 
 function App() {
   const {isAuth} = useAuth();
@@ -30,6 +31,7 @@ function App() {
             <Routes>
                 <Route element={<PrivateRoutes />}>
                   <Route path='/' element={<Dashboard />} />
+                  <Route path='/dashboard' element={<LeaderDashboard />} />
                   <Route path='/project/:id' element={<Project />} />
                   <Route path='/backlog/:id' element={<Backlog />} />
                   <Route path='/kanban/:id' element={<Kanban />} />

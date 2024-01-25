@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeUser = exports.getAllTeamUsers = exports.addUserToTeam = exports.listTeams = exports.getTeamById = exports.create = void 0;
+exports.listTeamsWithMembers = exports.removeUser = exports.getAllTeamUsers = exports.addUserToTeam = exports.listTeams = exports.getTeamById = exports.create = void 0;
 const Team_1 = __importDefault(require("../models/Team"));
 const User_1 = __importDefault(require("../models/User"));
 const mongoose = require('mongoose');
@@ -69,56 +69,6 @@ const listTeams = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.listTeams = listTeams;
-// Everything commented is disabled atm
-// // Send request to a fullnamed user
-// export const sendRequest = async (req: Request, res: Response) => {
-//     try {
-//         const { teamId, email } = req.params; 
-//         const userDetails = await User.find({email: email});
-//         if(!userDetails){
-//             res.json("User is not found!");
-//         }
-//         const team = await Team.findByIdAndUpdate(
-//             teamId,
-//             { $push: {
-//                 members: {
-//                     user: {
-//                         _id: userDetails[0]._id, // Assuming you want the first user if multiple found
-//                         fullname: userDetails[0].fullname,
-//                         email: userDetails[0].email,
-//                     },
-//                     status: 'pending' }} },
-//             { new: true } //You should set the new option to true to return the document after update was applied.
-//         );
-//         res.json(team);
-//     } catch (error) {
-//         console.log(error);
-//         res.json('Error sending the join team request.')
-//     }
-// }
-// // Send the response (e.x: accepting the request to join a team)
-// export const handleResponse = async (req: Request, res: Response) => {
-//     try {
-//         const { teamId, email } = req.params;
-//         const userDetails = await User.find({email: email}); // Use findOne instead of find
-//         if (!userDetails) {
-//             return res.json('User not found.');
-//         }
-//         const team = await Team.findOneAndUpdate(
-//             {
-//                 _id: teamId,
-//                 'members.user._id': userDetails[0]._id,
-//                 'members.status': 'pending',
-//             },
-//             { $set: { 'members.$.status': 'accepted' } },
-//             { new: true }
-//         );
-//         res.json(team);
-//     } catch (error) {
-//         console.error(error);
-//         res.json('Error handling the response of the team request.');
-//     }
-// };
 //Add other users to team
 const addUserToTeam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -182,3 +132,25 @@ const removeUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.removeUser = removeUser;
+// Lists every team and it's members to the team leader
+const listTeamsWithMembers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.params.id;
+        // Find teams where the user is the owner
+        const teams = yield Team_1.default.find({ owner: userId });
+        if (teams.length === 0) {
+            return res.json('User is not the owner of any teams.');
+        }
+        // Iterate through teams and get members for each team
+        const teamsWithMembers = yield Promise.all(teams.map((team) => __awaiter(void 0, void 0, void 0, function* () {
+            const members = yield User_1.default.find({ teams: team._id });
+            return { team: team.name, members: members.map((member) => member.name) };
+        })));
+        res.json(teamsWithMembers);
+    }
+    catch (error) {
+        console.log(error);
+        res.json('Error listing teams with members');
+    }
+});
+exports.listTeamsWithMembers = listTeamsWithMembers;

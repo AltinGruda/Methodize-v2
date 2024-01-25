@@ -1,5 +1,5 @@
 import Logo from '@/assets/logo.png'
-import { LayoutDashboard, Users2, Video, Settings, AreaChart, Brush } from 'lucide-react'
+import { LayoutDashboard, Users2, Video, Settings, AreaChart, Brush, Home } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 
 export function Sidebar() {
@@ -11,8 +11,12 @@ export function Sidebar() {
         <div className='flex flex-col items-center'>
             <div className='flex flex-col items-start gap-y-6 gap-x-5 text-lg text-[#6C6C6C]'>   
                 <div className='flex gap-y-6 gap-x-5 hover:text-[#D2D2D2] hover:cursor-pointer'>
-                    <LayoutDashboard className={`${location.pathname === '/' ? 'text-white' : ''}`} />
-                    <Link to="/" className={`${location.pathname === '/' ? 'text-white' : ''}`}>Dashboard</Link>
+                    <Home className={`${location.pathname === '/' ? 'text-white' : ''}`} />
+                    <Link to="/" className={`${location.pathname === '/' ? 'text-white' : ''}`}>Home</Link>
+                </div>
+                <div className='flex gap-y-6 gap-x-5 hover:text-[#D2D2D2] hover:cursor-pointer'>
+                    <LayoutDashboard className={`${location.pathname === '/dashboard' ? 'text-white' : ''}`} />
+                    <Link to="/dashboard" className={`${location.pathname === '/dashboard' ? 'text-white' : ''}`}>Dashboard</Link>
                 </div>
                 <div className='flex gap-y-6 gap-x-5 hover:text-[#D2D2D2] hover:cursor-pointer'>
                     <AreaChart className={`${location.pathname === '/charts' ? 'text-white' : ''}`} />

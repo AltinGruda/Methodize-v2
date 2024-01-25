@@ -57,62 +57,6 @@ export const listTeams = async (req: Request, res: Response) => {
     }
 } 
 
-// Everything commented is disabled atm
-// // Send request to a fullnamed user
-// export const sendRequest = async (req: Request, res: Response) => {
-//     try {
-//         const { teamId, email } = req.params; 
-//         const userDetails = await User.find({email: email});
-
-//         if(!userDetails){
-//             res.json("User is not found!");
-//         }
-
-//         const team = await Team.findByIdAndUpdate(
-//             teamId,
-//             { $push: {
-//                 members: {
-//                     user: {
-//                         _id: userDetails[0]._id, // Assuming you want the first user if multiple found
-//                         fullname: userDetails[0].fullname,
-//                         email: userDetails[0].email,
-//                     },
-//                     status: 'pending' }} },
-//             { new: true } //You should set the new option to true to return the document after update was applied.
-//         );
-//         res.json(team);
-//     } catch (error) {
-//         console.log(error);
-//         res.json('Error sending the join team request.')
-//     }
-// }
-
-// // Send the response (e.x: accepting the request to join a team)
-// export const handleResponse = async (req: Request, res: Response) => {
-//     try {
-//         const { teamId, email } = req.params;
-//         const userDetails = await User.find({email: email}); // Use findOne instead of find
-//         if (!userDetails) {
-//             return res.json('User not found.');
-//         }
-
-//         const team = await Team.findOneAndUpdate(
-//             {
-//                 _id: teamId,
-//                 'members.user._id': userDetails[0]._id,
-//                 'members.status': 'pending',
-//             },
-//             { $set: { 'members.$.status': 'accepted' } },
-//             { new: true }
-//         );
-
-//         res.json(team);
-//     } catch (error) {
-//         console.error(error);
-//         res.json('Error handling the response of the team request.');
-//     }
-// };
-
 //Add other users to team
 export const addUserToTeam = async (req: Request, res: Response, ) => {
     try {
@@ -184,3 +128,30 @@ export const removeUser = async (req: Request, res: Response) => {
         return res.status(500).json('Error removing user from the team.');
     }
 };
+
+// Lists every team and it's members to the team leader
+export const listTeamsWithMembers = async (req: Request, res: Response) => {
+    try {
+        const userId = req.params.id
+
+        // Find teams where the user is the owner
+        const teams = await Team.find({ owner: userId });
+
+        if (teams.length === 0) {
+            return res.json('User is not the owner of any teams.');
+        }
+
+        // Iterate through teams and get members for each team
+        const teamsWithMembers = await Promise.all(
+            teams.map(async (team: any) => {
+                const members = await User.find({ teams: team._id });
+                return { team: team.name, members: members.map((member: any) => member.name) };
+            })
+        );
+
+        res.json(teamsWithMembers);
+    } catch (error) {
+        console.log(error);
+        res.json('Error listing teams with members');
+    }
+}

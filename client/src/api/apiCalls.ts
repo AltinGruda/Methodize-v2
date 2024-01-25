@@ -490,3 +490,16 @@ export async function createTeam(teamName: string, userId: string | null) {
     throw error;
   }
 }
+
+export async function getUserByName(name: string) {
+  try {
+    const response = await fetch(`http://localhost:5000/auth/user-by-name/${name}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+  }
+
+  return response.json();
+  } catch (error) {
+    console.log(error);
+  }
+}

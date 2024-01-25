@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.allUsers = exports.login = exports.signup = void 0;
+exports.getUserByName = exports.getUserById = exports.allUsers = exports.login = exports.signup = void 0;
 const express_validator_1 = require("express-validator");
 // const bcrypt = require('bcryptjs');
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -116,3 +116,13 @@ const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getUserById = getUserById;
+const getUserByName = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield User_1.default.find({ name: req.params.name });
+        res.json(user);
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+exports.getUserByName = getUserByName;

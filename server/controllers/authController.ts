@@ -106,3 +106,13 @@ export const getUserById = async (req: Request, res: Response) => {
     console.log(error);
   }
 }
+
+export const getUserByName = async (req: Request, res: Response) => {
+  try {
+    const user = await User.find({name: req.params.name});
+
+    res.json(user);
+  } catch (error) {
+    console.log(error);
+  }
+}
