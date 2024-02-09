@@ -151,6 +151,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('user');
+    localStorage.removeItem('expiryDate');
   };
 
   const signup = async (userData: UserSignupData) => {
